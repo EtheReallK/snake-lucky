@@ -80,48 +80,114 @@ function shufflePrizes() {
    参数：ctx, cx, cy, size（图标内切圆半径）
    =================================================== */
 
-// 0 - 烟花
+// 0 - 胶片相机
 function drawFirework(ctx, cx, cy, size) {
   const r = size * 0.85;
-  // 深色背景圆
   ctx.save();
+
+  // 背景圆
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
-  ctx.fillStyle = '#050512';
+  ctx.fillStyle = '#050a14';
   ctx.fill();
-  // 烟花光束 12条
-  const rays = 12;
-  for (let i = 0; i < rays; i++) {
-    const angle = (i / rays) * Math.PI * 2;
-    const colors = ['#4488ff', '#88aaff', '#aaccff', '#ffffff', '#6699ff'];
-    const c = colors[i % colors.length];
-    const len = r * (0.5 + 0.5 * ((i % 3) / 3));
-    ctx.beginPath();
-    ctx.moveTo(cx, cy);
-    ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
-    ctx.strokeStyle = c;
-    ctx.lineWidth = 2;
-    ctx.shadowColor = c;
-    ctx.shadowBlur = 6;
-    ctx.stroke();
-  }
-  // 中心圆
+
+  // 相机机身
+  const bw = r * 1.5, bh = r * 1.1;
+  const bx = cx - bw / 2, by = cy - bh / 2 + r * 0.08;
+  roundRect(ctx, bx, by, bw, bh, r * 0.12);
+  const bodyGrad = ctx.createLinearGradient(bx, by, bx, by + bh);
+  bodyGrad.addColorStop(0, '#2a3a5a');
+  bodyGrad.addColorStop(1, '#151e30');
+  ctx.fillStyle = bodyGrad;
+  ctx.shadowColor = '#4488ff';
+  ctx.shadowBlur = 14;
+  ctx.fill();
+  roundRect(ctx, bx, by, bw, bh, r * 0.12);
+  ctx.strokeStyle = '#4488ff';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // 顶部取景器小凸起
+  const vw = bw * 0.3, vh = bh * 0.22;
+  roundRect(ctx, cx - vw / 2, by - vh, vw, vh, r * 0.06);
+  ctx.fillStyle = '#1e2a40';
+  ctx.fill();
+  roundRect(ctx, cx - vw / 2, by - vh, vw, vh, r * 0.06);
+  ctx.strokeStyle = '#4488ff88';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 镜头外圈
   ctx.beginPath();
-  ctx.arc(cx, cy, r * 0.12, 0, Math.PI * 2);
-  ctx.fillStyle = '#ffffff';
-  ctx.shadowColor = '#aaccff';
-  ctx.shadowBlur = 12;
+  ctx.arc(cx - r * 0.1, cy + r * 0.08, r * 0.38, 0, Math.PI * 2);
+  ctx.fillStyle = '#0a1020';
+  ctx.shadowColor = '#4488ff';
+  ctx.shadowBlur = 10;
   ctx.fill();
-  // 散点
-  for (let i = 0; i < 16; i++) {
-    const angle = (i / 16) * Math.PI * 2;
-    const dist = r * (0.55 + Math.random() * 0.2);
-    ctx.beginPath();
-    ctx.arc(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist, 2, 0, Math.PI * 2);
-    ctx.fillStyle = '#88bbff';
-    ctx.shadowBlur = 4;
-    ctx.fill();
-  }
+  ctx.strokeStyle = '#6699ff';
+  ctx.lineWidth = 2.5;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // 镜头中圈
+  ctx.beginPath();
+  ctx.arc(cx - r * 0.1, cy + r * 0.08, r * 0.26, 0, Math.PI * 2);
+  ctx.fillStyle = '#050d1a';
+  ctx.fill();
+  ctx.strokeStyle = '#4477cc';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // 镜头内圈（反光）
+  const lensGrad = ctx.createRadialGradient(
+    cx - r * 0.18, cy, 0,
+    cx - r * 0.1, cy + r * 0.08, r * 0.2
+  );
+  lensGrad.addColorStop(0, '#3355aa88');
+  lensGrad.addColorStop(0.5, '#1122440');
+  lensGrad.addColorStop(1, '#000000');
+  ctx.beginPath();
+  ctx.arc(cx - r * 0.1, cy + r * 0.08, r * 0.2, 0, Math.PI * 2);
+  ctx.fillStyle = lensGrad;
+  ctx.fill();
+
+  // 镜头高光
+  ctx.beginPath();
+  ctx.arc(cx - r * 0.2, cy, r * 0.07, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(150,180,255,0.35)';
+  ctx.fill();
+
+  // 快门按钮（右上）
+  ctx.beginPath();
+  ctx.arc(bx + bw * 0.82, by + bh * 0.28, r * 0.1, 0, Math.PI * 2);
+  ctx.fillStyle = '#4488ff';
+  ctx.shadowColor = '#4488ff';
+  ctx.shadowBlur = 8;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 闪光灯（左上小方块）
+  roundRect(ctx, bx + bw * 0.62, by + bh * 0.14, r * 0.22, r * 0.15, r * 0.04);
+  ctx.fillStyle = '#ffeeaa';
+  ctx.shadowColor = '#ffeeaa';
+  ctx.shadowBlur = 6;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // 胶片小孔装饰（左右两侧各两个）
+  [bx + r * 0.1, bx + bw - r * 0.1].forEach(px => {
+    [-0.25, 0.25].forEach(dy => {
+      ctx.beginPath();
+      ctx.arc(px, cy + r * dy, r * 0.06, 0, Math.PI * 2);
+      ctx.fillStyle = '#0a1020';
+      ctx.fill();
+      ctx.strokeStyle = '#4488ff44';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+    });
+  });
+
   ctx.restore();
 }
 
