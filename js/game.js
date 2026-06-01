@@ -114,11 +114,13 @@ const Game = (() => {
       if (eatCount % 5 === 0 && speed > 70) {
         setSpeed(Math.max(70, speed - 10));
       }
-      // 解锁61分
+      // 达到61分：直接结束游戏，触发抽奖
       if (!unlocked61 && score >= 61) {
         unlocked61 = true;
         Audio8bit.unlock61();
         if (onUnlock61) onUnlock61();
+        Renderer.drawFrame(canvas, snake, food, score, best, COLS, ROWS);
+        handleWin(); return;
       }
       spawnFood();
     } else {
@@ -132,7 +134,13 @@ const Game = (() => {
     stop();
     Audio8bit.die();
     Storage.updateBest(score);
-    if (onDie) onDie(score, unlocked61);
+    if (onDie) onDie(score, false); // 撞死 = 未解锁
+  }
+
+  function handleWin() {
+    stop();
+    Storage.updateBest(score);
+    if (onDie) onDie(score, true); // 达到61分 = 解锁
   }
 
   function spawnFood() {

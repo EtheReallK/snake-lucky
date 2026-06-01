@@ -53,8 +53,7 @@ function startGame() {
 
   // 更新UI
   updateChanceDots(document.getElementById('game-chances'), data.gamesPlayed);
-  document.getElementById('game-score').textContent = 'SCORE: ' + formatScore(0);
-  document.getElementById('game-best').textContent = 'BEST: ' + formatScore(data.bestScore);
+  updateProgressBar(0);
 
   showPage('game');
   resetPauseBtn();
@@ -67,17 +66,40 @@ function startGame() {
   });
 }
 
+function updateProgressBar(score) {
+  const TARGET = 61;
+  const pct = Math.min(score / TARGET * 100, 100);
+  const fill = document.getElementById('progress-bar-fill');
+  const glow = document.getElementById('progress-bar-glow');
+  const label = document.getElementById('progress-label');
+  const scoreEl = document.getElementById('progress-score');
+  if (!fill) return;
+
+  fill.style.width = pct + '%';
+  glow.style.width = pct + '%';
+  scoreEl.textContent = score + ' / ' + TARGET;
+
+  if (score >= TARGET) {
+    fill.classList.add('full');
+    glow.classList.add('full');
+    label.textContent = '🎉 盲盒已解锁！';
+    label.className = 'progress-label unlocked';
+  } else {
+    fill.classList.remove('full');
+    glow.classList.remove('full');
+    label.textContent = '还差 ' + (TARGET - score) + ' 分解锁盲盒 🎁';
+    label.className = 'progress-label';
+  }
+}
+
 function onScoreUpdate(score) {
   state.currentScore = score;
-  document.getElementById('game-score').textContent = 'SCORE: ' + formatScore(score);
+  updateProgressBar(score);
 }
 
 function onUnlock61() {
   state.currentUnlocked = true;
-  const banner = document.getElementById('unlock-banner');
-  banner.classList.remove('show');
-  void banner.offsetWidth; // 重置动画
-  banner.classList.add('show');
+  updateProgressBar(61);
 }
 
 function onDie(score, unlocked) {

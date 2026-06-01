@@ -50,19 +50,22 @@
 
   <!-- ==================== 游戏页 ==================== -->
   <div id="page-game" class="page">
-    <!-- 解锁提示横幅 -->
-    <div id="unlock-banner" class="unlock-banner">
-      ✨ 盲盒已解锁！继续冲！✨
-    </div>
-
     <div class="game-header">
-      <span id="game-score" class="game-score-label">SCORE: 0000</span>
-      <div id="game-chances" class="game-chances">
-        <span class="chance-dot"></span>
-        <span class="chance-dot"></span>
-        <span class="chance-dot"></span>
+      <div class="progress-row">
+        <span id="progress-label" class="progress-label">还差 61 分解锁盲盒 🎁</span>
+        <span id="progress-score" class="progress-score">0 / 61</span>
       </div>
-      <span id="game-best" class="best-val">BEST: 0000</span>
+      <div class="progress-bar-bg">
+        <div id="progress-bar-fill" class="progress-bar-fill" style="width:0%"></div>
+        <div id="progress-bar-glow" class="progress-bar-glow" style="width:0%"></div>
+      </div>
+      <div class="progress-footer">
+        <div id="game-chances" class="game-chances">
+          <span class="chance-dot"></span>
+          <span class="chance-dot"></span>
+          <span class="chance-dot"></span>
+        </div>
+      </div>
     </div>
 
     <canvas id="canvas-game"></canvas>
