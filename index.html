@@ -130,33 +130,35 @@
 
     <div class="result-redeem">📸 截图保存，找我兑奖！</div>
 
-    <div style="width:100%;max-width:260px">
+    <div class="btn-group" style="max-width:260px">
       <button id="btn-result-next" class="btn">继续游戏</button>
+      <button id="btn-result-review" class="btn btn-ghost" style="display:none">查看全部奖品 →</button>
     </div>
   </div>
 
   <!-- ==================== 惊喜盲盒页 ==================== -->
-  <div id="page-surprise" class="page">
-    <div class="lottery-title" style="color:var(--text-gold);font-size:16px;text-align:center;line-height:1.6">
+  <div id="page-surprise" class="page" style="justify-content:center;align-items:center;text-align:center;gap:20px;">
+    <div class="lottery-title" style="color:var(--text-gold);font-size:16px;line-height:1.8">
       🎊 六一儿童节的倒霉蛋<br>特别惊喜奖
     </div>
-    <div class="lottery-hint">不管刚刚抽到什么，没抽中我专门买的这个就算是你倒霉！再给你一个机会吧</div>
 
-    <div style="display:flex;justify-content:center;margin-top:8px;">
-      <div id="surprise-box" class="box-item" style="width:120px;height:120px;">
-        <div class="box-inner">
-          <div class="box-front">
-            <span class="box-question">?</span>
-            <span class="box-star">✦ ✦ ✦</span>
-          </div>
-          <div class="box-back">
-            <canvas id="canvas-surprise-thumb" width="90" height="90"></canvas>
-          </div>
+    <div class="lottery-hint" style="max-width:280px;line-height:1.8">
+      不管刚刚抽到什么，没抽中我专门买的这个就算是你倒霉！再给你一个机会吧
+    </div>
+
+    <div id="surprise-box" class="box-item" style="width:130px;height:130px;">
+      <div class="box-inner">
+        <div class="box-front">
+          <span class="box-question">?</span>
+          <span class="box-star">✦ ✦ ✦</span>
+        </div>
+        <div class="box-back">
+          <canvas id="canvas-surprise-thumb" width="90" height="90"></canvas>
         </div>
       </div>
     </div>
 
-    <div class="lottery-hint" style="margin-top:4px;">点击盲盒开启 ✨</div>
+    <div class="lottery-hint">点击盲盒开启 ✨</div>
   </div>
 
   <!-- ==================== 回顾页 ==================== -->

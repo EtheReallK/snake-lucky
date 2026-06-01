@@ -222,15 +222,23 @@ function showResultPage(prizeIdx) {
   const hasFirework = data.lotteryResults.some(r => r.prizeIndex === 0);
   const triggerSurprise = allDone && !hasFirework;
 
+  const btnReview = document.getElementById('btn-result-review');
+  btnReview.style.display = 'none'; // 默认隐藏
+
   if (gamesLeft > 0) {
     btnNext.textContent = '继续游戏';
+    btnNext.className = 'btn';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startGame(); };
   } else if (triggerSurprise) {
     btnNext.textContent = '🎊 领取特别惊喜！';
     btnNext.className = 'btn btn-gold';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showSurprisePage(); };
+    // 同时显示「查看全部奖品」入口
+    btnReview.style.display = '';
+    btnReview.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   } else {
     btnNext.textContent = '查看全部奖品';
+    btnNext.className = 'btn';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   }
 
@@ -275,9 +283,12 @@ function showSurpriseResult() {
   }, 300);
 
   const btnNext = document.getElementById('btn-result-next');
-  btnNext.textContent = '查看全部奖品';
+  btnNext.textContent = '查看全部奖品 →';
   btnNext.className = 'btn';
   btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
+
+  // 惊喜结果页不需要第二个按钮
+  document.getElementById('btn-result-review').style.display = 'none';
 
   showPage('result');
 }
