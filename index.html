@@ -137,28 +137,40 @@
   </div>
 
   <!-- ==================== 惊喜盲盒页 ==================== -->
-  <div id="page-surprise" class="page" style="justify-content:center;align-items:center;text-align:center;gap:20px;">
+  <div id="page-surprise" class="page" style="justify-content:center;align-items:center;text-align:center;gap:18px;">
     <div class="lottery-title" style="color:var(--text-gold);font-size:16px;line-height:1.8">
       🎊 六一儿童节的倒霉蛋<br>特别惊喜奖
     </div>
 
-    <div class="lottery-hint" style="max-width:280px;line-height:1.8">
-      不管刚刚抽到什么，没抽中我专门买的这个就算是你倒霉！再给你一个机会吧
-    </div>
-
-    <div id="surprise-box" class="box-item" style="width:130px;height:130px;">
-      <div class="box-inner">
-        <div class="box-front">
-          <span class="box-question">?</span>
-          <span class="box-star">✦ ✦ ✦</span>
-        </div>
-        <div class="box-back">
-          <canvas id="canvas-surprise-thumb" width="90" height="90"></canvas>
+    <!-- 翻开前显示 -->
+    <div id="surprise-before" style="display:flex;flex-direction:column;align-items:center;gap:16px;">
+      <div class="lottery-hint" style="max-width:280px;line-height:1.8">
+        不管刚刚抽到什么，没抽中我专门买的这个就算是你倒霉！再给你一个机会吧
+      </div>
+      <div id="surprise-box" class="box-item" style="width:130px;height:130px;">
+        <div class="box-inner">
+          <div class="box-front">
+            <span class="box-question">?</span>
+            <span class="box-star">✦ ✦ ✦</span>
+          </div>
+          <div class="box-back">
+            <canvas id="canvas-surprise-thumb" width="90" height="90"></canvas>
+          </div>
         </div>
       </div>
+      <div class="lottery-hint">点击盲盒开启 ✨</div>
     </div>
 
-    <div class="lottery-hint">点击盲盒开启 ✨</div>
+    <!-- 翻开后显示 -->
+    <div id="surprise-after" style="display:none;flex-direction:column;align-items:center;gap:16px;">
+      <div id="surprise-prize-name" class="result-prize-name"></div>
+      <div class="divider"></div>
+      <div id="surprise-prize-desc" class="result-desc"></div>
+      <div class="result-redeem">📸 截图保存，找我兑奖！</div>
+      <div style="width:100%;max-width:260px">
+        <button id="btn-surprise-review" class="btn">查看结果 →</button>
+      </div>
+    </div>
   </div>
 
   <!-- ==================== 回顾页 ==================== -->

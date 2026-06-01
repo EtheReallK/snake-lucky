@@ -248,49 +248,52 @@ function showResultPage(prizeIdx) {
 /* ===== 惊喜盲盒页 ===== */
 function showSurprisePage() {
   const box = document.getElementById('surprise-box');
-  // 重置盲盒状态（防止重复进入）
+  const before = document.getElementById('surprise-before');
+  const after = document.getElementById('surprise-after');
+
+  // 重置状态
   box.classList.remove('flipped', 'dimmed');
+  before.style.display = 'flex';
+  after.style.display = 'none';
 
   box.onclick = () => {
     if (box.classList.contains('flipped')) return;
     Audio8bit.flipOpen();
+
     // 绘制烟花缩略图到盲盒背面
     const thumb = document.getElementById('canvas-surprise-thumb');
     drawPrizeThumbnail(thumb, 0); // 0 = 烟花
     box.classList.add('flipped');
-    setTimeout(() => showSurpriseResult(), 900);
+
+    // 翻转动画结束后，隐藏提示文字，显示奖品信息
+    setTimeout(() => {
+      const prize = PRIZES[0]; // 烟花
+      document.getElementById('surprise-prize-name').textContent = prize.name;
+      document.getElementById('surprise-prize-desc').textContent = prize.desc;
+
+      // 隐藏文案和点击提示，只保留盲盒
+      before.querySelector('.lottery-hint').style.display = 'none';
+      before.querySelector('.lottery-hint:last-child') && (before.lastElementChild.style.display = 'none');
+
+      after.style.display = 'flex';
+
+      // 绑定「查看结果」按钮
+      document.getElementById('btn-surprise-review').onclick = () => {
+        Audio8bit.click();
+        Renderer.stopParticles();
+        showReviewPage();
+      };
+
+      // 粒子特效
+      Audio8bit.win();
+      setTimeout(() => {
+        const colors = ['#4488ff', '#88aaff', '#ffffff', '#aaccff', '#ffd700'];
+        Renderer.burst(window.innerWidth / 2, window.innerHeight / 2, colors, 200);
+      }, 100);
+    }, 700);
   };
 
   showPage('surprise');
-}
-
-/* ===== 惊喜结果页（复用 result 页） ===== */
-function showSurpriseResult() {
-  // 复用结果页，但特殊标题和按钮
-  document.getElementById('result-title').textContent = '🎊 特别惊喜奖！';
-  document.getElementById('result-prize-name').textContent = '一起看烟花';
-  document.getElementById('result-desc').textContent = '你有看过蓝色的烟花吗？以后就有啦';
-
-  const canvas = document.getElementById('canvas-prize');
-  canvas.width = 180;
-  canvas.height = 180;
-  drawPrizeLarge(canvas, 0); // 烟花
-
-  Audio8bit.win();
-  setTimeout(() => {
-    const colors = ['#4488ff', '#88aaff', '#ffffff', '#aaccff', '#ffd700'];
-    Renderer.burst(window.innerWidth / 2, window.innerHeight / 2, colors, 200);
-  }, 300);
-
-  const btnNext = document.getElementById('btn-result-next');
-  btnNext.textContent = '查看全部奖品 →';
-  btnNext.className = 'btn';
-  btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
-
-  // 惊喜结果页不需要第二个按钮
-  document.getElementById('btn-result-review').style.display = 'none';
-
-  showPage('result');
 }
 
 /* ===== 回顾页 ===== */
