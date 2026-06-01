@@ -59,10 +59,12 @@ function startGame() {
   resetPauseBtn();
   Renderer.stopParticles();
 
-  // 延迟一帧再启动（等canvas渲染完毕）
+  // 延迟两帧再启动，确保页面布局已完成、canvas 尺寸正确
   requestAnimationFrame(() => {
-    Game.resizeCanvas();
-    Game.start(data.bestScore);
+    requestAnimationFrame(() => {
+      Game.resizeCanvas();
+      Game.start(data.bestScore);
+    });
   });
 }
 
