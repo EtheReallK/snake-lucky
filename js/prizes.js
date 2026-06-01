@@ -2,8 +2,8 @@
 const PRIZES = [
   {
     id: 0,
-    name: '一起看烟花',
-    desc: '你有看过蓝色的烟花吗？以后就有啦',
+    name: '无条件配合yy拍胶片',
+    desc: '一份耕耘一份收获，现在你已经收获了蓝色烟花，希望你无条件配合yy拍胶片！不接受异议',
     color: '#4488ff',
     draw: drawFirework,
   },
