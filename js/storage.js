@@ -7,6 +7,7 @@ const Storage = (() => {
     bestScore: 0,         // 历史最高分
     lotteryResults: [],   // [{game, score, prizeIndex}]
     lotteryUsed: [false, false, false], // 各次是否已抽
+    lotteryLayout: null,  // 当前抽奖的9格布局 [prizeIdx, ...]，跨局持久化
   };
 
   function load() {
@@ -60,9 +61,21 @@ const Storage = (() => {
     save(d);
   }
 
+  function saveLayout(layout) {
+    const d = load();
+    d.lotteryLayout = layout;
+    save(d);
+  }
+
+  function clearLayout() {
+    const d = load();
+    d.lotteryLayout = null;
+    save(d);
+  }
+
   function reset() {
     save({ ...defaults });
   }
 
-  return { get, incrementGames, updateBest, recordLottery, markLotteryUsed, reset };
+  return { get, incrementGames, updateBest, recordLottery, markLotteryUsed, saveLayout, clearLayout, reset };
 })();
