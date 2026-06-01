@@ -260,21 +260,21 @@ function showSurprisePage() {
     if (box.classList.contains('flipped')) return;
     Audio8bit.flipOpen();
 
-    // 绘制烟花缩略图到盲盒背面
+    // 绘制相机缩略图到盲盒背面
     const thumb = document.getElementById('canvas-surprise-thumb');
-    drawPrizeThumbnail(thumb, 0); // 0 = 烟花
+    drawPrizeThumbnail(thumb, 0);
     box.classList.add('flipped');
 
-    // 翻转动画结束后，隐藏提示文字，显示奖品信息
+    // 翻转动画结束后显示奖品信息
     setTimeout(() => {
-      const prize = PRIZES[0]; // 烟花
+      const prize = PRIZES[0];
       document.getElementById('surprise-prize-name').textContent = prize.name;
       document.getElementById('surprise-prize-desc').textContent = prize.desc;
 
-      // 隐藏文案和点击提示，只保留盲盒
-      before.querySelector('.lottery-hint').style.display = 'none';
-      before.querySelector('.lottery-hint:last-child') && (before.lastElementChild.style.display = 'none');
+      // 隐藏 before 区域里的文案行和提示行，只保留盲盒本身
+      before.querySelectorAll('.lottery-hint').forEach(el => el.style.display = 'none');
 
+      // 显示 after 区域
       after.style.display = 'flex';
 
       // 绑定「查看结果」按钮
