@@ -1,0 +1,103 @@
+/* ===== 关键帧动画 ===== */
+
+/* 标题逐字出现 */
+@keyframes typeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 蛇装饰游动 */
+@keyframes snakeDeco {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  25%       { transform: translateX(8px) rotate(3deg); }
+  75%       { transform: translateX(-8px) rotate(-3deg); }
+}
+
+/* 霓虹闪烁 - 红 */
+@keyframes flickerRed {
+  0%, 100% { text-shadow: var(--glow-red); opacity: 1; }
+  50%       { text-shadow: none; opacity: 0.7; }
+}
+
+/* 霓虹闪烁 - 金 */
+@keyframes flickerGold {
+  0%, 100% { text-shadow: var(--glow-gold); opacity: 1; }
+  60%       { text-shadow: none; opacity: 0.8; }
+}
+
+/* 脉冲呼吸 */
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(0.97); }
+}
+
+/* 按钮呼吸发光 */
+@keyframes btnGlow {
+  0%, 100% { box-shadow: 0 0 8px var(--border), 0 0 0px var(--border); }
+  50%       { box-shadow: 0 0 16px var(--border), 0 0 32px var(--border)44; }
+}
+
+/* 金色按钮呼吸 */
+@keyframes btnGoldGlow {
+  0%, 100% { box-shadow: 0 0 8px var(--text-gold), 0 0 0px var(--text-gold); }
+  50%       { box-shadow: 0 0 18px var(--text-gold), 0 0 36px var(--text-gold)55; }
+}
+
+/* 解锁Banner淡入淡出 */
+@keyframes bannerFadeInOut {
+  0%   { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+  15%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  75%  { opacity: 1; transform: translateX(-50%) translateY(0); }
+  100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+}
+
+/* 页面淡入 */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* 盲盒悬停弹跳 */
+@keyframes boxHover {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-4px) scale(1.04); }
+}
+
+/* 盲盒抖动（全部 → 选完后变暗） */
+@keyframes boxShake {
+  0%, 100% { transform: translateX(0); }
+  20%       { transform: translateX(-3px); }
+  40%       { transform: translateX(3px); }
+  60%       { transform: translateX(-3px); }
+  80%       { transform: translateX(2px); }
+}
+
+/* 奖品弹入 */
+@keyframes prizeIn {
+  0%   { opacity: 0; transform: scale(0.3) rotate(-10deg); }
+  60%  { transform: scale(1.15) rotate(3deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); }
+}
+
+/* 星星旋转 */
+@keyframes starSpin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* 上下漂浮 */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-8px); }
+}
+
+/* 盲盒3D翻转 */
+@keyframes flipBox {
+  0%   { transform: rotateY(0deg); }
+  100% { transform: rotateY(180deg); }
+}
+
+/* 页面进入 */
+.page.active {
+  animation: fadeIn 0.3s ease;
+}

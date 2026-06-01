@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#0a0a0f" />
+  <title>三旬老人也要过儿童节</title>
+  
+  
+  
+  
+<style>:root{--bg:#0a0a0f;--bg-card:#0f0f1a;--grid:#1a1a2e;--border:#00ff88;--snake:#00ffff;--snake-dim:#00aaaa;--food:#ff6600;--text:#00ffff;--text-dim:#007777;--text-gold:#ffd700;--text-red:#ff4444;--text-white:#e0e0e0;--box-bg:#0d0d1f;--box-border:#2a2a4a;--glow-border:0 0 10px #00ff88,0 0 25px #00ff8844;--glow-snake:0 0 8px #00ffff,0 0 16px #00ffff88;--glow-food:0 0 10px #ff6600,0 0 20px #ff660088;--glow-text:0 0 6px #00ffff;--glow-gold:0 0 8px #ffd700,0 0 18px #ffd70088;--glow-red:0 0 8px #ff4444,0 0 18px #ff444488;--font-mono:'Courier New','Lucida Console',monospace;--max-w:420px;--radius:4px;}*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:var(--font-mono);overflow:hidden;user-select:none;}::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+#app{width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:var(--bg);}.page{display:none;flex-direction:column;align-items:center;width:100%;max-width:var(--max-w);height:100%;max-height:860px;padding:20px 16px;position:relative;overflow:hidden;}.page.active{display:flex;}#page-start{justify-content:center;gap:24px;}.start-title{font-size:22px;color:var(--border);text-shadow:var(--glow-border);text-align:center;letter-spacing:2px;line-height:1.6;}.start-snake-deco{font-size:32px;text-align:center;animation:snakeDeco 2s ease-in-out infinite;}.start-best{font-size:14px;color:var(--text-dim);letter-spacing:1px;}.chances-row{display:flex;gap:12px;align-items:center;font-size:13px;color:var(--text-dim);}.chance-dot{width:14px;height:14px;border-radius:50%;background:var(--border);box-shadow:0 0 8px var(--border);transition:all 0.3s;}.chance-dot.used{background:#2a2a3a;box-shadow:none;}#page-game{justify-content:flex-start;gap:0;padding:12px 12px 0;}.game-header{width:100%;display:flex;justify-content:space-between;align-items:center;padding:0 4px 8px;font-size:13px;letter-spacing:1px;}.game-score-label{color:var(--text);text-shadow:var(--glow-text);}.game-chances{display:flex;gap:6px;}#canvas-game{border:2px solid var(--border);box-shadow:var(--glow-border);border-radius:var(--radius);display:block;width:100%;max-width:390px;}.game-hint{margin-top:12px;font-size:12px;color:var(--text-dim);letter-spacing:2px;text-transform:uppercase;}.unlock-banner{position:absolute;top:60px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#1a1400,#2a2000,#1a1400);border:1px solid var(--text-gold);box-shadow:var(--glow-gold);color:var(--text-gold);font-size:13px;padding:8px 20px;border-radius:20px;white-space:nowrap;z-index:10;display:none;}.unlock-banner.show{display:block;animation:bannerFadeInOut 3s ease forwards;}#page-dead{justify-content:center;gap:20px;}.dead-title{font-size:36px;letter-spacing:4px;text-align:center;}.dead-title.lose{color:var(--text-red);text-shadow:var(--glow-red);animation:flickerRed 1.5s infinite;}.dead-title.win{color:var(--text-gold);text-shadow:var(--glow-gold);animation:flickerGold 1s infinite;}.dead-scores{text-align:center;line-height:2;font-size:15px;color:var(--text-white);}.dead-scores span{color:var(--text);text-shadow:var(--glow-text);}.dead-encourage{font-size:13px;color:var(--text-dim);text-align:center;}.dead-encourage.win-tip{color:var(--text-gold);text-shadow:var(--glow-gold);animation:pulse 1.2s ease-in-out infinite;font-size:15px;}.btn-group{display:flex;flex-direction:column;gap:12px;width:100%;max-width:260px;}#page-lottery{justify-content:center;gap:20px;}.lottery-title{font-size:20px;color:var(--text-gold);text-shadow:var(--glow-gold);text-align:center;letter-spacing:2px;}.lottery-hint{font-size:12px;color:var(--text-dim);animation:pulse 1.5s ease-in-out infinite;}.boxes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;width:100%;max-width:320px;}#page-result{justify-content:center;gap:18px;}.result-title{font-size:18px;color:var(--text-gold);text-shadow:var(--glow-gold);letter-spacing:2px;}#canvas-prize{border-radius:16px;}.result-prize-name{font-size:20px;color:var(--text-gold);text-shadow:var(--glow-gold);text-align:center;letter-spacing:1px;}.result-desc{font-size:14px;color:var(--text-white);text-align:center;line-height:1.8;max-width:300px;padding:12px 16px;border:1px solid var(--box-border);border-radius:8px;background:var(--box-bg);}.result-redeem{font-size:12px;color:var(--text-dim);animation:pulse 2s ease-in-out infinite;}#page-review{justify-content:center;gap:16px;overflow-y:auto;}.review-title{font-size:18px;color:var(--border);text-shadow:var(--glow-border);text-align:center;letter-spacing:2px;}.review-subtitle{font-size:13px;color:var(--text-dim);letter-spacing:1px;}.review-list{width:100%;max-width:320px;display:flex;flex-direction:column;gap:10px;}.review-item{display:flex;align-items:center;gap:14px;padding:12px 16px;border:1px solid var(--box-border);border-radius:8px;background:var(--box-bg);}.review-item-num{font-size:12px;color:var(--text-dim);min-width:36px;}.review-item-icon{width:36px;height:36px;flex-shrink:0;}.review-item-name{font-size:13px;color:var(--text-white);line-height:1.4;}.review-footer{font-size:14px;color:var(--text-gold);text-shadow:var(--glow-gold);text-align:center;margin-top:4px;}.review-redeem{font-size:12px;color:var(--text-dim);}#canvas-particles{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100;}
+.btn{display:block;width:100%;padding:14px 24px;border:2px solid var(--border);background:transparent;color:var(--border);font-family:var(--font-mono);font-size:15px;letter-spacing:2px;text-align:center;cursor:pointer;border-radius:var(--radius);transition:all 0.2s;animation:btnGlow 2s ease-in-out infinite;text-transform:uppercase;}.btn:hover,.btn:active{background:var(--border);color:var(--bg);box-shadow:0 0 20px var(--border);}.btn-gold{border-color:var(--text-gold);color:var(--text-gold);animation:btnGoldGlow 1.5s ease-in-out infinite;font-size:16px;}.btn-gold:hover,.btn-gold:active{background:var(--text-gold);color:var(--bg);box-shadow:0 0 20px var(--text-gold);}.btn-ghost{border-color:var(--box-border);color:var(--text-dim);animation:none;font-size:13px;}.btn-ghost:hover,.btn-ghost:active{background:var(--box-border);color:var(--text-white);box-shadow:none;}.box-item{position:relative;width:100%;aspect-ratio:1;cursor:pointer;perspective:600px;}.box-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.6s cubic-bezier(0.4,0,0.2,1);border-radius:8px;}.box-item.flipped .box-inner{transform:rotateY(180deg);}.box-front,.box-back{position:absolute;inset:0;border-radius:8px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;border:2px solid var(--box-border);background:var(--box-bg);}.box-front{flex-direction:column;gap:4px;border-color:var(--text-gold);box-shadow:0 0 8px var(--text-gold)44;transition:box-shadow 0.2s,border-color 0.2s;}.box-front:hover{border-color:var(--text-gold);box-shadow:0 0 18px var(--text-gold)88;animation:boxHover 0.8s ease-in-out infinite;}.box-back{transform:rotateY(180deg);border-color:var(--border);box-shadow:var(--glow-border);flex-direction:column;gap:4px;}.box-question{font-size:28px;color:var(--text-gold);text-shadow:var(--glow-gold);font-weight:bold;}.box-star{font-size:10px;color:var(--text-gold);opacity:0.6;}.box-item.dimmed .box-front{border-color:var(--box-border);box-shadow:none;opacity:0.3;cursor:not-allowed;animation:none;}.box-item.dimmed .box-front:hover{animation:none;box-shadow:none;}.score-val{color:var(--text);text-shadow:var(--glow-text);}.best-val{color:var(--text-dim);}.divider{width:100%;max-width:300px;height:1px;background:linear-gradient(90deg,transparent,var(--box-border),transparent);}
+@keyframes typeIn{from{opacity:0;transform:translateY(-10px);}to{opacity:1;transform:translateY(0);}}@keyframes snakeDeco{0%,100%{transform:translateX(0) rotate(0deg);}25%{transform:translateX(8px) rotate(3deg);}75%{transform:translateX(-8px) rotate(-3deg);}}@keyframes flickerRed{0%,100%{text-shadow:var(--glow-red);opacity:1;}50%{text-shadow:none;opacity:0.7;}}@keyframes flickerGold{0%,100%{text-shadow:var(--glow-gold);opacity:1;}60%{text-shadow:none;opacity:0.8;}}@keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:0.6;transform:scale(0.97);}}@keyframes btnGlow{0%,100%{box-shadow:0 0 8px var(--border),0 0 0px var(--border);}50%{box-shadow:0 0 16px var(--border),0 0 32px var(--border)44;}}@keyframes btnGoldGlow{0%,100%{box-shadow:0 0 8px var(--text-gold),0 0 0px var(--text-gold);}50%{box-shadow:0 0 18px var(--text-gold),0 0 36px var(--text-gold)55;}}@keyframes bannerFadeInOut{0%{opacity:0;transform:translateX(-50%) translateY(-10px);}15%{opacity:1;transform:translateX(-50%) translateY(0);}75%{opacity:1;transform:translateX(-50%) translateY(0);}100%{opacity:0;transform:translateX(-50%) translateY(-10px);}}@keyframes fadeIn{from{opacity:0;transform:translateY(16px);}to{opacity:1;transform:translateY(0);}}@keyframes boxHover{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-4px) scale(1.04);}}@keyframes boxShake{0%,100%{transform:translateX(0);}20%{transform:translateX(-3px);}40%{transform:translateX(3px);}60%{transform:translateX(-3px);}80%{transform:translateX(2px);}}@keyframes prizeIn{0%{opacity:0;transform:scale(0.3) rotate(-10deg);}60%{transform:scale(1.15) rotate(3deg);}100%{opacity:1;transform:scale(1) rotate(0deg);}}@keyframes starSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}@keyframes flipBox{0%{transform:rotateY(0deg);}100%{transform:rotateY(180deg);}}.page.active{animation:fadeIn 0.3s ease;}</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- 全局粒子层 -->
+  <canvas id="canvas-particles"></canvas>
+
+  <!-- 静音按钮（固定右上角） -->
+  <button id="btn-mute" style="
+    position:fixed;top:12px;right:12px;z-index:200;
+    background:transparent;border:1px solid var(--box-border);
+    color:var(--text-dim);font-size:16px;padding:4px 8px;
+    border-radius:4px;cursor:pointer;font-family:var(--font-mono);
+  ">🔊</button>
+
+  <!-- ==================== 开始页 ==================== -->
+  <div id="page-start" class="page">
+    <div style="height:60px"></div>
+
+    <div class="start-title">
+      三旬老人<br>也要过儿童节
+    </div>
+
+    <div class="start-snake-deco">🐍 ～～～</div>
+
+    <div id="start-chances" class="chances-row">
+      剩余机会
+      <span class="chance-dot"></span>
+      <span class="chance-dot"></span>
+      <span class="chance-dot"></span>
+    </div>
+
+    <div style="width:100%;max-width:260px">
+      <button id="btn-start" class="btn btn-gold">开始游戏</button>
+    </div>
+
+    <div id="start-best" class="start-best">BEST: 0000</div>
+  </div>
+
+  <!-- ==================== 游戏页 ==================== -->
+  <div id="page-game" class="page">
+    <!-- 解锁提示横幅 -->
+    <div id="unlock-banner" class="unlock-banner">
+      ✨ 盲盒已解锁！继续冲！✨
+    </div>
+
+    <div class="game-header">
+      <span id="game-score" class="game-score-label">SCORE: 0000</span>
+      <div id="game-chances" class="game-chances">
+        <span class="chance-dot"></span>
+        <span class="chance-dot"></span>
+        <span class="chance-dot"></span>
+      </div>
+      <span id="game-best" class="best-val">BEST: 0000</span>
+    </div>
+
+    <canvas id="canvas-game"></canvas>
+
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;margin-top:10px;">
+      <div class="game-hint">SWIPE TO MOVE</div>
+      <button id="btn-pause" style="
+        background:transparent;
+        border:1px solid var(--text-dim);
+        color:var(--text-dim);
+        font-size:18px;
+        width:34px;height:34px;
+        border-radius:6px;
+        cursor:pointer;
+        line-height:1;
+        transition:all 0.2s;
+        flex-shrink:0;
+      ">⏸</button>
+    </div>
+  </div>
+
+  <!-- ==================== 结束页 ==================== -->
+  <div id="page-dead" class="page">
+    <div id="dead-title" class="dead-title lose">GAME OVER</div>
+
+    <div class="dead-scores">
+      得分：<span id="dead-score">0000</span><br>
+      最高：<span id="dead-best">0000</span>
+    </div>
+
+    <div id="dead-encourage" class="dead-encourage"></div>
+
+    <div class="btn-group">
+      <button id="btn-lottery" class="btn btn-gold">🎁 打开盲盒！</button>
+      <button id="btn-retry" class="btn">再玩一次</button>
+    </div>
+  </div>
+
+  <!-- ==================== 盲盒页 ==================== -->
+  <div id="page-lottery" class="page">
+    <div class="lottery-title">🎁 开盲盒！</div>
+    <div class="lottery-hint">选择一个盲盒，只有一次机会 ✨</div>
+
+    <div class="boxes-grid">
+      <!-- JS动态生成9个盲盒 -->
+    </div>
+  </div>
+
+  <!-- ==================== 奖品结果页 ==================== -->
+  <div id="page-result" class="page">
+    <div class="result-title">🎊 恭喜！</div>
+
+    <canvas id="canvas-prize" width="180" height="180"
+      style="animation: prizeIn 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards, float 3s ease-in-out 0.6s infinite;">
+    </canvas>
+
+    <div id="result-prize-name" class="result-prize-name"></div>
+
+    <div class="divider"></div>
+
+    <div id="result-desc" class="result-desc"></div>
+
+    <div class="result-redeem">📸 截图保存，找我兑奖！</div>
+
+    <div style="width:100%;max-width:260px">
+      <button id="btn-result-next" class="btn">继续游戏</button>
+    </div>
+  </div>
+
+  <!-- ==================== 回顾页 ==================== -->
+  <div id="page-review" class="page">
+    <div class="review-title">🎊 活动已结束</div>
+    <div class="review-subtitle">三旬老人也要过儿童节</div>
+
+    <div class="divider"></div>
+
+    <div style="font-size:13px;color:var(--text-dim)">— 你的抽奖记录 —</div>
+
+    <div id="review-list" class="review-list">
+      <!-- JS动态生成 -->
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="review-footer">祝你儿童节快乐 🎉</div>
+    <div class="review-redeem">📸 截图保存，找我兑奖！</div>
+  </div>
+
+</div><!-- #app -->
+
+<!-- JS模块（顺序很重要） -->
+
+
+
+
+
+
+
+
+<script>const STORAGE_KEY = 'snakeLucky_v1';
+const Storage = (() => {
+ const defaults = {
+ gamesPlayed: 0, 
+ bestScore: 0, 
+ lotteryResults: [], 
+ lotteryUsed: [false, false, false], 
+ };
+ function load() {
+ try {
+ const raw = localStorage.getItem(STORAGE_KEY);
+ if (!raw) return { ...defaults };
+ return { ...defaults, ...JSON.parse(raw) };
+ } catch (e) {
+ return { ...defaults };
+ }
+ }
+ function save(data) {
+ try {
+ localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+ } catch (e) { }
+ }
+ function get() { return load(); }
+ function incrementGames() {
+ const d = load();
+ d.gamesPlayed = Math.min(d.gamesPlayed + 1, 3);
+ save(d);
+ return d;
+ }
+ function updateBest(score) {
+ const d = load();
+ if (score > d.bestScore) {
+ d.bestScore = score;
+ save(d);
+ }
+ return d.bestScore;
+ }
+ function recordLottery(gameIndex, score, prizeIndex) {
+ const d = load();
+ d.lotteryResults.push({ game: gameIndex, score, prizeIndex });
+ if (d.lotteryUsed[gameIndex] !== undefined) {
+ d.lotteryUsed[gameIndex] = true;
+ }
+ save(d);
+ }
+ function markLotteryUsed(gameIndex) {
+ const d = load();
+ if (d.lotteryUsed[gameIndex] !== undefined) {
+ d.lotteryUsed[gameIndex] = true;
+ }
+ save(d);
+ }
+ function reset() {
+ save({ ...defaults });
+ }
+ return { get, incrementGames, updateBest, recordLottery, markLotteryUsed, reset };
+})();
+const PRIZES = [
+ {
+ id: 0,
+ name: '一起看烟花',
+ desc: '你有看过蓝色的烟花吗？以后就有啦',
+ color: '#4488ff',
+ draw: drawFirework,
+ },
+ {
+ id: 1,
+ name: '今天吃啥决策卡',
+ desc: '不知道吃什么的时候yy老师大发慈悲帮你决定一次',
+ color: '#ff88cc',
+ draw: drawDecisionCard,
+ },
+ {
+ id: 2,
+ name: '手枪腿会有的',
+ desc: '儿童节特许你获得手枪腿一枚，30个自然日内兑换',
+ color: '#ff6644',
+ draw: drawLeg,
+ },
+ {
+ id: 3,
+ name: '牙齿和冰淇淋兼得',
+ desc: '我乱说的，吃冰淇淋的时候要一心一意，不要分心想牙齿',
+ color: '#aaeeff',
+ draw: drawIceCream,
+ },
+ {
+ id: 4,
+ name: '公交车靠窗位置',
+ desc: 'yy老师倾情赞助位置一个，公交车票自备',
+ color: '#44ff88',
+ draw: drawBusWindow,
+ },
+ {
+ id: 5,
+ name: '欠yy一顿饭',
+ desc: '餐标不能缩减，需要孙丽莎亲手做',
+ color: '#ffaa44',
+ draw: drawMeal,
+ },
+ {
+ id: 6,
+ name: '无条件给yy道歉',
+ desc: '不论何时！不论何地！随时道歉！',
+ color: '#ff44aa',
+ draw: drawApology,
+ },
+ {
+ id: 7,
+ name: 'yy想要蛋糕就可以有',
+ desc: '想不到其他了，万一抽到这个就欠我一个蛋糕吧',
+ color: '#ffdd44',
+ draw: drawCake,
+ },
+ {
+ id: 8,
+ name: '请yy吃饭',
+ desc: '想不到其他了，万一抽到这个就请我吃一顿贵贵的饭吧',
+ color: '#ff8844',
+ draw: drawDinner,
+ },
+];
+function shufflePrizes() {
+ const arr = PRIZES.map((_, i) => i); 
+ for (let i = arr.length - 1; i > 0; i--) {
+ const j = Math.floor(Math.random() * (i + 1));
+ [arr[i], arr[j]] = [arr[j], arr[i]];
+ }
+ return arr; 
+}
+function drawFirework(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#050512';
+ ctx.fill();
+ const rays = 12;
+ for (let i = 0; i < rays; i++) {
+ const angle = (i / rays) * Math.PI * 2;
+ const colors = ['#4488ff', '#88aaff', '#aaccff', '#ffffff', '#6699ff'];
+ const c = colors[i % colors.length];
+ const len = r * (0.5 + 0.5 * ((i % 3) / 3));
+ ctx.beginPath();
+ ctx.moveTo(cx, cy);
+ ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+ ctx.strokeStyle = c;
+ ctx.lineWidth = 2;
+ ctx.shadowColor = c;
+ ctx.shadowBlur = 6;
+ ctx.stroke();
+ }
+ ctx.beginPath();
+ ctx.arc(cx, cy, r * 0.12, 0, Math.PI * 2);
+ ctx.fillStyle = '#ffffff';
+ ctx.shadowColor = '#aaccff';
+ ctx.shadowBlur = 12;
+ ctx.fill();
+ for (let i = 0; i < 16; i++) {
+ const angle = (i / 16) * Math.PI * 2;
+ const dist = r * (0.55 + Math.random() * 0.2);
+ ctx.beginPath();
+ ctx.arc(cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist, 2, 0, Math.PI * 2);
+ ctx.fillStyle = '#88bbff';
+ ctx.shadowBlur = 4;
+ ctx.fill();
+ }
+ ctx.restore();
+}
+function drawDecisionCard(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#150a1a';
+ ctx.fill();
+ const cw = r * 1.1, ch = r * 1.3;
+ const cx0 = cx - cw / 2, cy0 = cy - ch / 2;
+ roundRect(ctx, cx0, cy0, cw, ch, 6);
+ ctx.fillStyle = '#2a0a3a';
+ ctx.fill();
+ ctx.strokeStyle = '#ff88cc';
+ ctx.lineWidth = 2;
+ ctx.shadowColor = '#ff88cc';
+ ctx.shadowBlur = 8;
+ ctx.stroke();
+ ctx.font = `bold ${r * 0.8}px sans-serif`;
+ ctx.fillStyle = '#ff88cc';
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.shadowColor = '#ff88cc';
+ ctx.shadowBlur = 14;
+ ctx.fillText('?', cx, cy);
+ drawStar4(ctx, cx0 + 8, cy0 + 8, 5, '#ffaadd');
+ drawStar4(ctx, cx0 + cw - 8, cy0 + 8, 5, '#ffaadd');
+ ctx.restore();
+}
+function drawLeg(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#1a0c00';
+ ctx.fill();
+ ctx.translate(cx, cy);
+ ctx.rotate(-0.6);
+ const meatW = r * 0.52, meatH = r * 0.72;
+ const meatX = 0, meatY = -r * 0.1;
+ const meatGrad = ctx.createRadialGradient(meatX - meatW * 0.2, meatY - meatH * 0.2, 0, meatX, meatY, meatW);
+ meatGrad.addColorStop(0, '#ffcc88');
+ meatGrad.addColorStop(0.4, '#e8882a');
+ meatGrad.addColorStop(0.8, '#c05010');
+ meatGrad.addColorStop(1, '#8a2800');
+ ctx.beginPath();
+ ctx.ellipse(meatX, meatY, meatW, meatH, 0, 0, Math.PI * 2);
+ ctx.fillStyle = meatGrad;
+ ctx.shadowColor = '#ff8822';
+ ctx.shadowBlur = 16;
+ ctx.fill();
+ ctx.shadowBlur = 0;
+ ctx.strokeStyle = 'rgba(80,20,0,0.55)';
+ ctx.lineWidth = 2;
+ for (let i = 0; i < 4; i++) {
+ const oy = meatY - meatH * 0.45 + i * meatH * 0.28;
+ const hw = meatW * Math.sqrt(1 - Math.pow((oy - meatY) / meatH, 2)) * 0.85;
+ ctx.beginPath();
+ ctx.ellipse(meatX, oy, hw, hw * 0.18, 0, 0, Math.PI);
+ ctx.stroke();
+ }
+ const boneX = meatX + meatW * 0.05;
+ const boneTop = meatY + meatH * 0.55;
+ const boneH = r * 0.55, boneW = r * 0.1;
+ const boneGrad = ctx.createLinearGradient(boneX - boneW, boneTop, boneX + boneW, boneTop);
+ boneGrad.addColorStop(0, '#e0e0e0');
+ boneGrad.addColorStop(0.5, '#ffffff');
+ boneGrad.addColorStop(1, '#c0c0c0');
+ roundRect(ctx, boneX - boneW / 2, boneTop, boneW, boneH, boneW / 2);
+ ctx.fillStyle = boneGrad;
+ ctx.shadowColor = '#aaaaaa';
+ ctx.shadowBlur = 4;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.arc(boneX, boneTop + boneH, boneW * 1.3, 0, Math.PI * 2);
+ ctx.fillStyle = '#f0f0f0';
+ ctx.shadowColor = '#bbbbbb';
+ ctx.shadowBlur = 6;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.arc(boneX, boneTop + boneH * 0.08, boneW * 1.1, 0, Math.PI * 2);
+ ctx.fillStyle = '#f8f8f8';
+ ctx.fill();
+ ctx.shadowBlur = 0;
+ ctx.beginPath();
+ ctx.ellipse(meatX - meatW * 0.25, meatY - meatH * 0.3, meatW * 0.2, meatH * 0.12, -0.5, 0, Math.PI * 2);
+ ctx.fillStyle = 'rgba(255,240,180,0.55)';
+ ctx.fill();
+ ctx.restore();
+}
+function drawIceCream(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#050f14';
+ ctx.fill();
+ const coneH = r * 0.75, coneW = r * 0.55;
+ const top = cy - r * 0.3;
+ ctx.beginPath();
+ ctx.moveTo(cx - coneW / 2, top);
+ ctx.lineTo(cx, top + coneH);
+ ctx.lineTo(cx + coneW / 2, top);
+ ctx.closePath();
+ ctx.fillStyle = '#c8882a';
+ ctx.fill();
+ ctx.strokeStyle = '#a06010';
+ ctx.lineWidth = 1;
+ for (let i = 0; i < 4; i++) {
+ const y = top + (coneH / 4) * i;
+ const hw = (coneW / 2) * (1 - i / 4);
+ ctx.beginPath(); ctx.moveTo(cx - hw, y); ctx.lineTo(cx + hw, y); ctx.stroke();
+ }
+ const ballR = coneW * 0.7;
+ ctx.beginPath();
+ ctx.arc(cx, top, ballR, 0, Math.PI * 2);
+ const grad = ctx.createRadialGradient(cx - ballR * 0.2, top - ballR * 0.2, 0, cx, top, ballR);
+ grad.addColorStop(0, '#ffffff');
+ grad.addColorStop(0.5, '#aaeeff');
+ grad.addColorStop(1, '#44ccee');
+ ctx.fillStyle = grad;
+ ctx.shadowColor = '#aaeeff';
+ ctx.shadowBlur = 14;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.arc(cx, top + ballR * 0.3, ballR * 0.35, 0, Math.PI * 2);
+ ctx.fillStyle = '#5a2800';
+ ctx.shadowBlur = 0;
+ ctx.fill();
+ ctx.restore();
+}
+function drawBusWindow(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#040d12';
+ ctx.fill();
+ const bw = r * 1.75, bh = r * 0.9;
+ const bx = cx - bw / 2, by = cy - bh / 2 + r * 0.08;
+ roundRect(ctx, bx, by, bw, bh, r * 0.12);
+ const bodyGrad = ctx.createLinearGradient(bx, by, bx, by + bh);
+ bodyGrad.addColorStop(0, '#1a6644');
+ bodyGrad.addColorStop(0.5, '#0f4a30');
+ bodyGrad.addColorStop(1, '#0a3322');
+ ctx.fillStyle = bodyGrad;
+ ctx.shadowColor = '#44ff88';
+ ctx.shadowBlur = 14;
+ ctx.fill();
+ roundRect(ctx, bx, by, bw, bh, r * 0.12);
+ ctx.strokeStyle = '#44ff88';
+ ctx.lineWidth = 2;
+ ctx.stroke();
+ roundRect(ctx, bx + bw * 0.05, by - bh * 0.22, bw * 0.9, bh * 0.25, r * 0.08);
+ ctx.fillStyle = '#0f4a30';
+ ctx.shadowBlur = 0;
+ ctx.fill();
+ roundRect(ctx, bx + bw * 0.05, by - bh * 0.22, bw * 0.9, bh * 0.25, r * 0.08);
+ ctx.strokeStyle = '#44ff8888';
+ ctx.lineWidth = 1.5;
+ ctx.stroke();
+ ctx.shadowBlur = 0;
+ const winW = bw * 0.22, winH = bh * 0.36;
+ const winY = by + bh * 0.1;
+ const winPositions = [bx + bw * 0.08, bx + bw * 0.37, bx + bw * 0.66];
+ winPositions.forEach((wx, i) => {
+ roundRect(ctx, wx, winY, winW, winH, r * 0.05);
+ const wg = ctx.createLinearGradient(wx, winY, wx, winY + winH);
+ wg.addColorStop(0, '#1a3a5a');
+ wg.addColorStop(1, '#0a1a2a');
+ ctx.fillStyle = wg;
+ ctx.fill();
+ roundRect(ctx, wx, winY, winW, winH, r * 0.05);
+ ctx.strokeStyle = i === 1 ? '#00ffff' : '#44aacc'; 
+ ctx.lineWidth = i === 1 ? 2.5 : 1.5;
+ ctx.shadowColor = i === 1 ? '#00ffff' : 'transparent';
+ ctx.shadowBlur = i === 1 ? 8 : 0;
+ ctx.stroke();
+ ctx.shadowBlur = 0;
+ if (i === 1) {
+ ctx.fillStyle = '#00ffff';
+ ctx.font = `${winH * 0.5}px sans-serif`;
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.shadowColor = '#00ffff';
+ ctx.shadowBlur = 6;
+ ctx.fillText('★', wx + winW / 2, winY + winH / 2);
+ ctx.shadowBlur = 0;
+ }
+ });
+ const doorW = bw * 0.14, doorH = bh * 0.58;
+ const doorX = bx + bw * 0.82, doorY = by + bh * 0.38;
+ roundRect(ctx, doorX, doorY, doorW, doorH, r * 0.04);
+ ctx.fillStyle = '#0a2a1a';
+ ctx.fill();
+ roundRect(ctx, doorX, doorY, doorW, doorH, r * 0.04);
+ ctx.strokeStyle = '#44ff8866';
+ ctx.lineWidth = 1.5;
+ ctx.stroke();
+ ctx.beginPath();
+ ctx.moveTo(doorX + doorW / 2, doorY + 2);
+ ctx.lineTo(doorX + doorW / 2, doorY + doorH - 2);
+ ctx.strokeStyle = '#44ff8844';
+ ctx.lineWidth = 1;
+ ctx.stroke();
+ ctx.beginPath();
+ ctx.ellipse(bx + r * 0.08, by + bh * 0.72, r * 0.1, r * 0.07, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#ffee88';
+ ctx.shadowColor = '#ffee88';
+ ctx.shadowBlur = 10;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(bx + bw - r * 0.08, by + bh * 0.72, r * 0.1, r * 0.07, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#ff4444';
+ ctx.shadowColor = '#ff4444';
+ ctx.shadowBlur = 10;
+ ctx.fill();
+ ctx.shadowBlur = 0;
+ const wheelR = r * 0.17;
+ const wheelY = by + bh + wheelR * 0.35;
+ [bx + bw * 0.2, bx + bw * 0.75].forEach(wx => {
+ ctx.beginPath();
+ ctx.arc(wx, wheelY, wheelR, 0, Math.PI * 2);
+ ctx.fillStyle = '#1a1a1a';
+ ctx.shadowColor = '#44ff8844';
+ ctx.shadowBlur = 6;
+ ctx.fill();
+ ctx.strokeStyle = '#44ff88';
+ ctx.lineWidth = 2;
+ ctx.stroke();
+ ctx.beginPath();
+ ctx.arc(wx, wheelY, wheelR * 0.45, 0, Math.PI * 2);
+ ctx.fillStyle = '#2a2a2a';
+ ctx.shadowBlur = 0;
+ ctx.fill();
+ ctx.strokeStyle = '#888888';
+ ctx.lineWidth = 1.5;
+ ctx.stroke();
+ for (let i = 0; i < 4; i++) {
+ const a = (i / 4) * Math.PI * 2;
+ ctx.beginPath();
+ ctx.moveTo(wx + Math.cos(a) * wheelR * 0.45, wheelY + Math.sin(a) * wheelR * 0.45);
+ ctx.lineTo(wx + Math.cos(a) * wheelR * 0.9, wheelY + Math.sin(a) * wheelR * 0.9);
+ ctx.strokeStyle = '#666666';
+ ctx.lineWidth = 1.5;
+ ctx.stroke();
+ }
+ });
+ ctx.beginPath();
+ ctx.moveTo(bx - r * 0.1, wheelY + wheelR);
+ ctx.lineTo(bx + bw + r * 0.1, wheelY + wheelR);
+ ctx.strokeStyle = '#44ff8844';
+ ctx.lineWidth = 1;
+ ctx.stroke();
+ ctx.restore();
+}
+function drawMeal(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#120a00';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.2, r * 0.65, r * 0.25, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#e8d8b0';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.2, r * 0.65, r * 0.25, 0, Math.PI, 0);
+ ctx.fillStyle = '#c8aa70';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.2, r * 0.65, r * 0.25, 0, 0, Math.PI * 2);
+ ctx.strokeStyle = '#ffaa44';
+ ctx.lineWidth = 2;
+ ctx.shadowColor = '#ffaa44';
+ ctx.shadowBlur = 8;
+ ctx.stroke();
+ for (let i = 0; i < 5; i++) {
+ const angle = (i / 5) * Math.PI + Math.PI;
+ ctx.beginPath();
+ ctx.moveTo(cx + Math.cos(angle) * r * 0.4, cy + r * 0.15);
+ ctx.quadraticCurveTo(
+ cx + Math.cos(angle) * r * 0.2, cy - r * 0.05,
+ cx + Math.cos(angle + 0.5) * r * 0.35, cy + r * 0.05
+ );
+ ctx.strokeStyle = '#fff0cc';
+ ctx.lineWidth = 2.5;
+ ctx.shadowBlur = 3;
+ ctx.stroke();
+ }
+ ctx.font = `${r * 0.35}px sans-serif`;
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.shadowColor = '#ff4488';
+ ctx.shadowBlur = 10;
+ ctx.fillText('♥', cx, cy - r * 0.45);
+ ctx.restore();
+}
+function drawApology(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#100010';
+ ctx.fill();
+ const bw = r * 1.55, bh = r * 0.75;
+ const bx = cx - bw / 2, by = cy - r * 0.25 - bh / 2;
+ roundRect(ctx, bx, by, bw, bh, r * 0.15);
+ ctx.fillStyle = '#2a0033';
+ ctx.fill();
+ roundRect(ctx, bx, by, bw, bh, r * 0.15);
+ ctx.strokeStyle = '#ff44aa';
+ ctx.lineWidth = 2.5;
+ ctx.shadowColor = '#ff44aa';
+ ctx.shadowBlur = 12;
+ ctx.stroke();
+ ctx.shadowBlur = 0;
+ const tailX = cx + r * 0.3, tailY = by + bh;
+ ctx.beginPath();
+ ctx.moveTo(tailX - r * 0.08, tailY);
+ ctx.lineTo(tailX + r * 0.22, tailY + r * 0.32);
+ ctx.lineTo(tailX + r * 0.14, tailY);
+ ctx.fillStyle = '#2a0033';
+ ctx.fill();
+ ctx.strokeStyle = '#ff44aa';
+ ctx.lineWidth = 2.5;
+ ctx.shadowColor = '#ff44aa';
+ ctx.shadowBlur = 8;
+ ctx.stroke();
+ ctx.shadowBlur = 0;
+ ctx.font = `bold ${r * 0.38}px sans-serif`;
+ ctx.fillStyle = '#ff88dd';
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.shadowColor = '#ff44aa';
+ ctx.shadowBlur = 10;
+ ctx.fillText('对不起！', cx, cy - r * 0.25);
+ ctx.shadowBlur = 0;
+ const marks = ['!', '!', '!'];
+ marks.forEach((m, i) => {
+ ctx.font = `bold ${r * 0.22}px sans-serif`;
+ ctx.fillStyle = `rgba(255,100,180,${0.8 - i * 0.2})`;
+ ctx.shadowColor = '#ff44aa';
+ ctx.shadowBlur = 4;
+ ctx.fillText(m, tailX + r * 0.28 + i * r * 0.2, tailY + r * 0.28 + i * r * 0.14);
+ });
+ ctx.shadowBlur = 0;
+ ctx.restore();
+}
+function drawCake(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#120800';
+ ctx.fill();
+ const layers = [
+ { y: cy + r * 0.45, w: r * 1.1, h: r * 0.35, color: '#e8c4a0', cream: '#fff0e0' },
+ { y: cy + r * 0.1, w: r * 0.85, h: r * 0.32, color: '#d4a070', cream: '#ffe8cc' },
+ { y: cy - r * 0.2, w: r * 0.6, h: r * 0.28, color: '#c07840', cream: '#ffd8aa' },
+ ];
+ layers.forEach(l => {
+ roundRect(ctx, cx - l.w / 2, l.y - l.h, l.w, l.h, 4);
+ ctx.fillStyle = l.color;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, l.y - l.h, l.w / 2, l.h * 0.22, 0, 0, Math.PI * 2);
+ ctx.fillStyle = l.cream;
+ ctx.fill();
+ });
+ const candleX = [cx - r * 0.2, cx, cx + r * 0.2];
+ const candleColors = ['#ff4488', '#ffdd44', '#44aaff'];
+ candleX.forEach((x, i) => {
+ const baseY = layers[2].y - layers[2].h + 2;
+ ctx.fillStyle = candleColors[i];
+ ctx.shadowColor = candleColors[i];
+ ctx.shadowBlur = 6;
+ roundRect(ctx, x - 4, baseY - r * 0.25, 8, r * 0.25, 2);
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(x, baseY - r * 0.3, 4, 7, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#ffee44';
+ ctx.shadowColor = '#ffcc00';
+ ctx.shadowBlur = 10;
+ ctx.fill();
+ });
+ ctx.restore();
+}
+function drawDinner(ctx, cx, cy, size) {
+ const r = size * 0.85;
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(cx, cy, r, 0, Math.PI * 2);
+ ctx.fillStyle = '#0a0800';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.15, r * 0.65, r * 0.2, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#e8e0d0';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.1, r * 0.5, r * 0.15, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#f8f0e0';
+ ctx.fill();
+ ctx.beginPath();
+ ctx.ellipse(cx, cy + r * 0.05, r * 0.35, r * 0.1, 0, 0, Math.PI * 2);
+ ctx.fillStyle = '#c85020';
+ ctx.shadowColor = '#ff6633';
+ ctx.shadowBlur = 8;
+ ctx.fill();
+ ctx.shadowBlur = 0;
+ ctx.beginPath();
+ ctx.moveTo(cx - r * 0.5, cy - r * 0.5);
+ ctx.lineTo(cx - r * 0.5, cy + r * 0.4);
+ ctx.strokeStyle = '#c0c0c0';
+ ctx.lineWidth = 3;
+ ctx.lineCap = 'round';
+ ctx.stroke();
+ ctx.beginPath();
+ ctx.moveTo(cx + r * 0.5, cy - r * 0.5);
+ ctx.lineTo(cx + r * 0.5, cy + r * 0.4);
+ ctx.strokeStyle = '#c0c0c0';
+ ctx.lineWidth = 3;
+ ctx.stroke();
+ ctx.font = `${r * 0.25}px sans-serif`;
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.shadowColor = '#ffdd44';
+ ctx.shadowBlur = 8;
+ ctx.fillText('⭐', cx - r * 0.3, cy - r * 0.5);
+ ctx.fillText('⭐', cx + r * 0.3, cy - r * 0.5);
+ ctx.restore();
+}
+function roundRect(ctx, x, y, w, h, r) {
+ ctx.beginPath();
+ ctx.moveTo(x + r, y);
+ ctx.lineTo(x + w - r, y);
+ ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+ ctx.lineTo(x + w, y + h - r);
+ ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+ ctx.lineTo(x + r, y + h);
+ ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+ ctx.lineTo(x, y + r);
+ ctx.quadraticCurveTo(x, y, x + r, y);
+ ctx.closePath();
+}
+function drawStar4(ctx, x, y, r, color) {
+ ctx.save();
+ ctx.fillStyle = color;
+ ctx.shadowColor = color;
+ ctx.shadowBlur = 6;
+ ctx.beginPath();
+ for (let i = 0; i < 4; i++) {
+ const a = (i / 4) * Math.PI * 2;
+ const a2 = ((i + 0.5) / 4) * Math.PI * 2;
+ ctx.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r);
+ ctx.lineTo(x + Math.cos(a2) * r * 0.4, y + Math.sin(a2) * r * 0.4);
+ }
+ ctx.closePath();
+ ctx.fill();
+ ctx.restore();
+}
+function drawCloud(ctx, cx, cy, r) {
+ ctx.save();
+ ctx.fillStyle = 'rgba(255,255,255,0.7)';
+ ctx.shadowBlur = 0;
+ [[0, 0, r * 0.5], [-r * 0.5, r * 0.2, r * 0.4], [r * 0.5, r * 0.2, r * 0.4]].forEach(([dx, dy, cr]) => {
+ ctx.beginPath();
+ ctx.arc(cx + dx, cy + dy, cr, 0, Math.PI * 2);
+ ctx.fill();
+ });
+ ctx.restore();
+}
+function drawPrizeThumbnail(canvas, prizeIndex) {
+ const ctx = canvas.getContext('2d');
+ const s = canvas.width;
+ ctx.clearRect(0, 0, s, s);
+ const prize = PRIZES[prizeIndex];
+ prize.draw(ctx, s / 2, s / 2, s * 0.42);
+}
+function drawPrizeLarge(canvas, prizeIndex) {
+ const ctx = canvas.getContext('2d');
+ const s = canvas.width;
+ ctx.clearRect(0, 0, s, s);
+ const prize = PRIZES[prizeIndex];
+ ctx.save();
+ ctx.beginPath();
+ ctx.arc(s / 2, s / 2, s * 0.46, 0, Math.PI * 2);
+ ctx.fillStyle = prize.color + '22';
+ ctx.fill();
+ ctx.strokeStyle = prize.color;
+ ctx.lineWidth = 2;
+ ctx.shadowColor = prize.color;
+ ctx.shadowBlur = 16;
+ ctx.stroke();
+ ctx.restore();
+ prize.draw(ctx, s / 2, s / 2, s * 0.42);
+}
+const Audio8bit = (() => {
+ let ctx = null;
+ let muted = false;
+ function getCtx() {
+ if (!ctx) {
+ try { ctx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+ }
+ return ctx;
+ }
+ function unlock() { getCtx(); }
+ function playTone(freq, type, duration, volume = 0.3, startTime = 0) {
+ const ac = getCtx();
+ if (!ac || muted) return;
+ const t = ac.currentTime + startTime;
+ const osc = ac.createOscillator();
+ const gain = ac.createGain();
+ osc.connect(gain);
+ gain.connect(ac.destination);
+ osc.type = type;
+ osc.frequency.setValueAtTime(freq, t);
+ gain.gain.setValueAtTime(volume, t);
+ gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+ osc.start(t);
+ osc.stop(t + duration + 0.01);
+ }
+ function playNoise(duration, volume = 0.2) {
+ const ac = getCtx();
+ if (!ac || muted) return;
+ const bufferSize = ac.sampleRate * duration;
+ const buffer = ac.createBuffer(1, bufferSize, ac.sampleRate);
+ const data = buffer.getChannelData(0);
+ for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+ const source = ac.createBufferSource();
+ source.buffer = buffer;
+ const gain = ac.createGain();
+ gain.gain.setValueAtTime(volume, ac.currentTime);
+ gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + duration);
+ source.connect(gain);
+ gain.connect(ac.destination);
+ source.start();
+ source.stop(ac.currentTime + duration);
+ }
+ function eat() {
+ playTone(880, 'square', 0.08, 0.25);
+ playTone(1320, 'square', 0.06, 0.15, 0.05);
+ }
+ function unlock61() {
+ const notes = [523, 659, 784, 1047];
+ notes.forEach((f, i) => playTone(f, 'square', 0.1, 0.2, i * 0.1));
+ }
+ function die() {
+ playTone(440, 'sawtooth', 0.1, 0.3);
+ playTone(330, 'sawtooth', 0.1, 0.3, 0.1);
+ playTone(220, 'sawtooth', 0.15, 0.3, 0.2);
+ playNoise(0.15, 0.1);
+ }
+ function hover() {
+ playTone(660, 'sine', 0.04, 0.1);
+ }
+ function flipOpen() {
+ const notes = [330, 440, 550, 660];
+ notes.forEach((f, i) => playTone(f, 'square', 0.08, 0.18, i * 0.07));
+ playNoise(0.05, 0.15);
+ playNoise(0.05, 0.12);
+ }
+ function win() {
+ const melody = [523, 659, 784, 1047, 1319];
+ melody.forEach((f, i) => {
+ playTone(f, 'square', 0.12, 0.25, i * 0.09);
+ playTone(f * 2, 'sine', 0.06, 0.1, i * 0.09 + 0.03);
+ });
+ }
+ function click() {
+ playTone(440, 'square', 0.05, 0.15);
+ }
+ function toggleMute() {
+ muted = !muted;
+ return muted;
+ }
+ function isMuted() { return muted; }
+ return { unlock, eat, unlock61, die, hover, flipOpen, win, click, toggleMute, isMuted };
+})();
+const Input = (() => {
+ let onDir = null; 
+ let touchStartX = 0, touchStartY = 0;
+ let lastDir = { dx: 1, dy: 0 };
+ const MIN_SWIPE = 20; 
+ const keyMap = {
+ ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
+ w: [0, -1], s: [0, 1], a: [-1, 0], d: [1, 0],
+ W: [0, -1], S: [0, 1], A: [-1, 0], D: [1, 0],
+ };
+ function setCallback(fn) { onDir = fn; }
+ function emit(dx, dy) {
+ if (dx === -lastDir.dx && dy === -lastDir.dy) return;
+ if (dx === 0 && dy === 0) return;
+ lastDir = { dx, dy };
+ if (onDir) onDir(dx, dy);
+ }
+ function onKeyDown(e) {
+ if (e.key === ' ' || e.key === 'Escape') {
+ e.preventDefault();
+ document.getElementById('btn-pause')?.click();
+ return;
+ }
+ const dir = keyMap[e.key];
+ if (dir) {
+ e.preventDefault();
+ emit(dir[0], dir[1]);
+ }
+ }
+ function onTouchStart(e) {
+ const t = e.touches[0];
+ touchStartX = t.clientX;
+ touchStartY = t.clientY;
+ }
+ function onTouchEnd(e) {
+ const t = e.changedTouches[0];
+ const dx = t.clientX - touchStartX;
+ const dy = t.clientY - touchStartY;
+ const absDx = Math.abs(dx), absDy = Math.abs(dy);
+ if (Math.max(absDx, absDy) < MIN_SWIPE) return;
+ if (absDx > absDy) emit(dx > 0 ? 1 : -1, 0);
+ else emit(0, dy > 0 ? 1 : -1);
+ }
+ function enable() {
+ document.addEventListener('keydown', onKeyDown);
+ document.addEventListener('touchstart', onTouchStart, { passive: true });
+ document.addEventListener('touchend', onTouchEnd, { passive: true });
+ }
+ function disable() {
+ document.removeEventListener('keydown', onKeyDown);
+ document.removeEventListener('touchstart', onTouchStart);
+ document.removeEventListener('touchend', onTouchEnd);
+ }
+ function reset() { lastDir = { dx: 1, dy: 0 }; }
+ return { setCallback, enable, disable, reset };
+})();
+const Renderer = (() => {
+ const GRID_COLOR = '#1a1a2e';
+ const BG_COLOR = '#0a0a0f';
+ const SNAKE_HEAD = '#00ffff';
+ const SNAKE_BODY = '#00cccc';
+ const FOOD_COLOR = '#ff6600';
+ function drawFrame(canvas, snake, food, score, best, cols, rows) {
+ const ctx = canvas.getContext('2d');
+ const W = canvas.width, H = canvas.height;
+ const cs = W / cols; 
+ ctx.fillStyle = BG_COLOR;
+ ctx.fillRect(0, 0, W, H);
+ ctx.strokeStyle = GRID_COLOR;
+ ctx.lineWidth = 0.5;
+ for (let x = 0; x <= cols; x++) {
+ ctx.beginPath(); ctx.moveTo(x * cs, 0); ctx.lineTo(x * cs, H); ctx.stroke();
+ }
+ for (let y = 0; y <= rows; y++) {
+ ctx.beginPath(); ctx.moveTo(0, y * cs); ctx.lineTo(W, y * cs); ctx.stroke();
+ }
+ if (food) {
+ const fx = food.x * cs + cs / 2;
+ const fy = food.y * cs + cs / 2;
+ const fr = cs * 0.38;
+ ctx.save();
+ ctx.shadowColor = FOOD_COLOR;
+ ctx.shadowBlur = 14;
+ ctx.beginPath();
+ ctx.arc(fx, fy, fr, 0, Math.PI * 2);
+ ctx.fillStyle = FOOD_COLOR;
+ ctx.fill();
+ ctx.beginPath();
+ ctx.arc(fx - fr * 0.3, fy - fr * 0.3, fr * 0.25, 0, Math.PI * 2);
+ ctx.fillStyle = 'rgba(255,200,100,0.6)';
+ ctx.shadowBlur = 0;
+ ctx.fill();
+ ctx.restore();
+ }
+ snake.forEach((seg, i) => {
+ const sx = seg.x * cs + cs / 2;
+ const sy = seg.y * cs + cs / 2;
+ const alpha = Math.max(0.15, 1 - i * 0.06);
+ const r = i === 0 ? cs * 0.44 : cs * 0.36 * (0.8 + 0.2 * alpha);
+ ctx.save();
+ ctx.globalAlpha = alpha;
+ ctx.shadowColor = SNAKE_HEAD;
+ ctx.shadowBlur = i === 0 ? 14 : 6;
+ ctx.beginPath();
+ ctx.arc(sx, sy, r, 0, Math.PI * 2);
+ ctx.fillStyle = i === 0 ? SNAKE_HEAD : SNAKE_BODY;
+ ctx.fill();
+ if (i === 0) {
+ ctx.shadowBlur = 0;
+ ctx.fillStyle = BG_COLOR;
+ ctx.beginPath(); ctx.arc(sx + r * 0.35, sy - r * 0.25, r * 0.18, 0, Math.PI * 2); ctx.fill();
+ ctx.beginPath(); ctx.arc(sx - r * 0.35, sy - r * 0.25, r * 0.18, 0, Math.PI * 2); ctx.fill();
+ ctx.fillStyle = SNAKE_HEAD;
+ ctx.beginPath(); ctx.arc(sx + r * 0.35, sy - r * 0.25, r * 0.08, 0, Math.PI * 2); ctx.fill();
+ ctx.beginPath(); ctx.arc(sx - r * 0.35, sy - r * 0.25, r * 0.08, 0, Math.PI * 2); ctx.fill();
+ }
+ ctx.restore();
+ });
+ }
+ function showPauseOverlay(canvas) {
+ const ctx = canvas.getContext('2d');
+ const W = canvas.width, H = canvas.height;
+ ctx.save();
+ ctx.fillStyle = 'rgba(10,10,15,0.72)';
+ ctx.fillRect(0, 0, W, H);
+ ctx.font = `bold ${W * 0.1}px 'Courier New', monospace`;
+ ctx.textAlign = 'center';
+ ctx.textBaseline = 'middle';
+ ctx.fillStyle = '#00ffff';
+ ctx.shadowColor = '#00ffff';
+ ctx.shadowBlur = 18;
+ ctx.fillText('PAUSED', W / 2, H / 2 - W * 0.06);
+ ctx.font = `${W * 0.05}px 'Courier New', monospace`;
+ ctx.fillStyle = '#007777';
+ ctx.shadowBlur = 0;
+ ctx.fillText('点击 ⏸ 继续游戏', W / 2, H / 2 + W * 0.06);
+ ctx.restore();
+ }
+ function hidePauseOverlay(canvas) {
+ }
+ let particles = [];
+ let particleCanvas, particleCtx, particleAnimId;
+ function initParticles(canvas) {
+ particleCanvas = canvas;
+ particleCtx = canvas.getContext('2d');
+ }
+ function burst(x, y, colors, count = 80) {
+ for (let i = 0; i < count; i++) {
+ const angle = Math.random() * Math.PI * 2;
+ const speed = 2 + Math.random() * 6;
+ particles.push({
+ x, y,
+ vx: Math.cos(angle) * speed,
+ vy: Math.sin(angle) * speed,
+ r: 2 + Math.random() * 3,
+ color: colors[Math.floor(Math.random() * colors.length)],
+ life: 1,
+ decay: 0.015 + Math.random() * 0.02,
+ });
+ }
+ if (!particleAnimId) animateParticles();
+ }
+ function animateParticles() {
+ if (!particleCanvas) return;
+ particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+ particles = particles.filter(p => p.life > 0);
+ particles.forEach(p => {
+ p.x += p.vx;
+ p.y += p.vy;
+ p.vy += 0.15; 
+ p.life -= p.decay;
+ particleCtx.save();
+ particleCtx.globalAlpha = Math.max(0, p.life);
+ particleCtx.fillStyle = p.color;
+ particleCtx.shadowColor = p.color;
+ particleCtx.shadowBlur = 4;
+ particleCtx.beginPath();
+ particleCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+ particleCtx.fill();
+ particleCtx.restore();
+ });
+ if (particles.length > 0) {
+ particleAnimId = requestAnimationFrame(animateParticles);
+ } else {
+ particleAnimId = null;
+ particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+ }
+ }
+ function stopParticles() {
+ if (particleAnimId) { cancelAnimationFrame(particleAnimId); particleAnimId = null; }
+ particles = [];
+ if (particleCtx) particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+ }
+ return { drawFrame, showPauseOverlay, hidePauseOverlay, initParticles, burst, stopParticles };
+})();
+const Game = (() => {
+ const COLS = 20, ROWS = 28;
+ let canvas, ctx;
+ let snake, dir, nextDir, food, score, best;
+ let running = false, paused = false, gameLoop = null;
+ let unlocked61 = false;
+ let speed = 130; 
+ let eatCount = 0;
+ let onScoreUpdate = null;
+ let onDie = null;
+ let onUnlock61 = null;
+ function init(canvasEl, callbacks = {}) {
+ canvas = canvasEl;
+ ctx = canvas.getContext('2d');
+ onScoreUpdate = callbacks.onScoreUpdate || null;
+ onDie = callbacks.onDie || null;
+ onUnlock61 = callbacks.onUnlock61 || null;
+ resizeCanvas();
+ }
+ function resizeCanvas() {
+ const parent = canvas.parentElement;
+ const maxW = Math.min(parent.clientWidth, 390);
+ const cellSize = Math.floor(maxW / COLS);
+ canvas.width = cellSize * COLS;
+ canvas.height = cellSize * ROWS;
+ }
+ function getCellSize() { return canvas.width / COLS; }
+ function start(bestScore) {
+ best = bestScore || 0;
+ score = 0;
+ unlocked61 = false;
+ eatCount = 0;
+ speed = 130;
+ snake = [
+ { x: 10, y: 14 },
+ { x: 9, y: 14 },
+ { x: 8, y: 14 },
+ ];
+ dir = { dx: 1, dy: 0 };
+ nextDir = { dx: 1, dy: 0 };
+ spawnFood();
+ running = true;
+ Input.reset();
+ Input.setCallback((dx, dy) => { nextDir = { dx, dy }; });
+ Input.enable();
+ if (gameLoop) clearInterval(gameLoop);
+ gameLoop = setInterval(tick, speed);
+ Renderer.drawFrame(canvas, snake, food, score, best, COLS, ROWS);
+ }
+ function stop() {
+ running = false;
+ paused = false;
+ if (gameLoop) { clearInterval(gameLoop); gameLoop = null; }
+ Input.disable();
+ }
+ function togglePause() {
+ if (!running && !paused) return false; 
+ if (paused) {
+ paused = false;
+ running = true;
+ gameLoop = setInterval(tick, speed);
+ Renderer.hidePauseOverlay(canvas);
+ } else {
+ paused = true;
+ running = false;
+ if (gameLoop) { clearInterval(gameLoop); gameLoop = null; }
+ Renderer.showPauseOverlay(canvas);
+ }
+ return paused;
+ }
+ function isPaused() { return paused; }
+ function setSpeed(ms) {
+ speed = ms;
+ if (gameLoop) {
+ clearInterval(gameLoop);
+ gameLoop = setInterval(tick, speed);
+ }
+ }
+ function tick() {
+ if (!running) return;
+ dir = { ...nextDir };
+ const head = {
+ x: ((snake[0].x + dir.dx) % COLS + COLS) % COLS,
+ y: ((snake[0].y + dir.dy) % ROWS + ROWS) % ROWS,
+ };
+ if (snake.some(s => s.x === head.x && s.y === head.y)) {
+ handleDie(); return;
+ }
+ snake.unshift(head);
+ if (head.x === food.x && head.y === food.y) {
+ score += 10;
+ eatCount++;
+ Audio8bit.eat();
+ if (onScoreUpdate) onScoreUpdate(score);
+ if (eatCount % 5 === 0 && speed > 70) {
+ setSpeed(Math.max(70, speed - 10));
+ }
+ if (!unlocked61 && score >= 61) {
+ unlocked61 = true;
+ Audio8bit.unlock61();
+ if (onUnlock61) onUnlock61();
+ }
+ spawnFood();
+ } else {
+ snake.pop();
+ }
+ Renderer.drawFrame(canvas, snake, food, score, best, COLS, ROWS);
+ }
+ function handleDie() {
+ stop();
+ Audio8bit.die();
+ Storage.updateBest(score);
+ if (onDie) onDie(score, unlocked61);
+ }
+ function spawnFood() {
+ const empty = [];
+ for (let x = 0; x < COLS; x++) {
+ for (let y = 0; y < ROWS; y++) {
+ if (!snake.some(s => s.x === x && s.y === y)) {
+ empty.push({ x, y });
+ }
+ }
+ }
+ food = empty[Math.floor(Math.random() * empty.length)];
+ }
+ return { init, start, stop, togglePause, isPaused, resizeCanvas };
+})();
+const Lottery = (() => {
+ let shuffledPrizes = []; 
+ let selectedPrize = null;
+ let onResult = null;
+ function prepare(callback) {
+ shuffledPrizes = shufflePrizes();
+ selectedPrize = null;
+ onResult = callback;
+ renderBoxes();
+ }
+ function renderBoxes() {
+ const grid = document.querySelector('.boxes-grid');
+ grid.innerHTML = '';
+ shuffledPrizes.forEach((prizeIdx, boxPos) => {
+ const item = document.createElement('div');
+ item.className = 'box-item';
+ item.dataset.pos = boxPos;
+ item.dataset.prize = prizeIdx;
+ const inner = document.createElement('div');
+ inner.className = 'box-inner';
+ const front = document.createElement('div');
+ front.className = 'box-front';
+ front.innerHTML = `<span class="box-question">?</span><span class="box-star">✦ ✦ ✦</span>`;
+ const back = document.createElement('div');
+ back.className = 'box-back';
+ const thumbCanvas = document.createElement('canvas');
+ thumbCanvas.width = 70;
+ thumbCanvas.height = 70;
+ back.appendChild(thumbCanvas);
+ inner.appendChild(front);
+ inner.appendChild(back);
+ item.appendChild(inner);
+ grid.appendChild(item);
+ front.addEventListener('mouseenter', () => {
+ if (!item.classList.contains('dimmed')) Audio8bit.hover();
+ });
+ item.addEventListener('click', () => selectBox(item, prizeIdx, thumbCanvas));
+ });
+ }
+ function selectBox(item, prizeIdx, thumbCanvas) {
+ if (selectedPrize !== null) return; 
+ if (item.classList.contains('dimmed')) return;
+ selectedPrize = prizeIdx;
+ Audio8bit.flipOpen();
+ drawPrizeThumbnail(thumbCanvas, prizeIdx);
+ item.classList.add('flipped');
+ setTimeout(() => {
+ document.querySelectorAll('.box-item').forEach(el => {
+ if (el !== item) el.classList.add('dimmed');
+ });
+ }, 300);
+ setTimeout(() => {
+ if (onResult) onResult(prizeIdx);
+ }, 900);
+ }
+ return { prepare };
+})();
+const MAX_GAMES = 3;
+const UNLOCK_SCORE = 61;
+let state = {
+ currentPage: 'start',
+ gameIndex: 0, 
+ currentScore: 0,
+ currentUnlocked: false,
+};
+function showPage(id) {
+ document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+ document.getElementById('page-' + id).classList.add('active');
+ state.currentPage = id;
+}
+function formatScore(n) { return String(n).padStart(4, '0'); }
+function updateChanceDots(container, gamesPlayed) {
+ const dots = container.querySelectorAll('.chance-dot');
+ dots.forEach((d, i) => {
+ d.classList.toggle('used', i < gamesPlayed);
+ });
+}
+function initStartPage() {
+ const data = Storage.get();
+ const gamesLeft = MAX_GAMES - data.gamesPlayed;
+ document.getElementById('start-best').textContent = 'BEST: ' + formatScore(data.bestScore);
+ updateChanceDots(document.getElementById('start-chances'), data.gamesPlayed);
+ const btn = document.getElementById('btn-start');
+ if (data.gamesPlayed >= MAX_GAMES) {
+ btn.textContent = '查看结果';
+ btn.onclick = () => { Audio8bit.click(); showReviewPage(); };
+ } else {
+ btn.textContent = '开始游戏';
+ btn.onclick = () => { Audio8bit.click(); startGame(); };
+ }
+}
+function startGame() {
+ const data = Storage.get();
+ state.gameIndex = data.gamesPlayed; 
+ state.currentScore = 0;
+ state.currentUnlocked = false;
+ updateChanceDots(document.getElementById('game-chances'), data.gamesPlayed);
+ document.getElementById('game-score').textContent = 'SCORE: ' + formatScore(0);
+ document.getElementById('game-best').textContent = 'BEST: ' + formatScore(data.bestScore);
+ showPage('game');
+ resetPauseBtn();
+ Renderer.stopParticles();
+ requestAnimationFrame(() => {
+ Game.resizeCanvas();
+ Game.start(data.bestScore);
+ });
+}
+function onScoreUpdate(score) {
+ state.currentScore = score;
+ document.getElementById('game-score').textContent = 'SCORE: ' + formatScore(score);
+}
+function onUnlock61() {
+ state.currentUnlocked = true;
+ const banner = document.getElementById('unlock-banner');
+ banner.classList.remove('show');
+ void banner.offsetWidth; 
+ banner.classList.add('show');
+}
+function onDie(score, unlocked) {
+ Storage.incrementGames();
+ Storage.updateBest(score);
+ showDeadPage(score, unlocked);
+}
+function showDeadPage(score, unlocked) {
+ const data = Storage.get();
+ document.getElementById('dead-score').textContent = formatScore(score);
+ document.getElementById('dead-best').textContent = formatScore(data.bestScore);
+ const title = document.getElementById('dead-title');
+ const encourage = document.getElementById('dead-encourage');
+ const btnLottery = document.getElementById('btn-lottery');
+ const btnRetry = document.getElementById('btn-retry');
+ const gamesLeft = MAX_GAMES - data.gamesPlayed;
+ if (unlocked) {
+ title.className = 'dead-title win';
+ title.textContent = '🎉 YOU WIN!';
+ encourage.className = 'dead-encourage win-tip';
+ encourage.textContent = '✨ 恭喜解锁盲盒抽奖！快来开盲盒！';
+ btnLottery.style.display = '';
+ btnLottery.onclick = () => {
+ Audio8bit.click();
+ Storage.recordLottery(state.gameIndex, score, -1); 
+ showLotteryPage(score);
+ };
+ } else {
+ title.className = 'dead-title lose';
+ title.textContent = 'GAME OVER';
+ btnLottery.style.display = 'none';
+ const gap = UNLOCK_SCORE - score;
+ if (gap > 0 && gamesLeft > 0) {
+ encourage.className = 'dead-encourage';
+ encourage.textContent = `🎁 再差 ${gap} 分就能开盲盒！`;
+ } else if (gamesLeft === 0) {
+ encourage.className = 'dead-encourage';
+ encourage.textContent = '游戏机会已用完，查看你的抽奖结果吧 🎊';
+ } else {
+ encourage.className = 'dead-encourage';
+ encourage.textContent = '';
+ }
+ }
+ if (gamesLeft > 0) {
+ btnRetry.textContent = '再玩一次';
+ btnRetry.onclick = () => { Audio8bit.click(); startGame(); };
+ } else {
+ btnRetry.textContent = '查看全部结果';
+ btnRetry.onclick = () => { Audio8bit.click(); showReviewPage(); };
+ }
+ if (unlocked) {
+ setTimeout(() => {
+ const colors = ['#ffd700', '#ff6600', '#00ffff', '#ff44aa', '#44ff88'];
+ const cx = window.innerWidth / 2, cy = window.innerHeight / 3;
+ Renderer.burst(cx, cy, colors, 120);
+ }, 200);
+ }
+ showPage('dead');
+}
+function showLotteryPage(score) {
+ showPage('lottery');
+ Lottery.prepare((prizeIdx) => {
+ const data = Storage.get();
+ const lastResult = data.lotteryResults[data.lotteryResults.length - 1];
+ if (lastResult) lastResult.prizeIndex = prizeIdx;
+ try {
+ const raw = JSON.parse(localStorage.getItem('snakeLucky_v1') || '{}');
+ if (raw.lotteryResults && raw.lotteryResults.length > 0) {
+ raw.lotteryResults[raw.lotteryResults.length - 1].prizeIndex = prizeIdx;
+ localStorage.setItem('snakeLucky_v1', JSON.stringify(raw));
+ }
+ } catch (e) {}
+ showResultPage(prizeIdx);
+ });
+}
+function showResultPage(prizeIdx) {
+ const prize = PRIZES[prizeIdx];
+ document.getElementById('result-prize-name').textContent = prize.name;
+ document.getElementById('result-desc').textContent = prize.desc;
+ const canvas = document.getElementById('canvas-prize');
+ canvas.width = 180;
+ canvas.height = 180;
+ drawPrizeLarge(canvas, prizeIdx);
+ Audio8bit.win();
+ setTimeout(() => {
+ const colors = ['#ffd700', '#ff6600', prize.color, '#ffffff', '#ff44aa'];
+ Renderer.burst(window.innerWidth / 2, window.innerHeight / 2, colors, 150);
+ }, 300);
+ const data = Storage.get();
+ const gamesLeft = MAX_GAMES - data.gamesPlayed;
+ const btnNext = document.getElementById('btn-result-next');
+ if (gamesLeft > 0) {
+ btnNext.textContent = '继续游戏';
+ btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startGame(); };
+ } else {
+ btnNext.textContent = '查看全部奖品';
+ btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
+ }
+ showPage('result');
+}
+function showReviewPage() {
+ const data = Storage.get();
+ const list = document.getElementById('review-list');
+ list.innerHTML = '';
+ if (data.lotteryResults.length === 0) {
+ list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">还没有抽奖记录</div>';
+ } else {
+ data.lotteryResults.forEach((r, i) => {
+ const prize = PRIZES[r.prizeIndex];
+ if (!prize) return;
+ const item = document.createElement('div');
+ item.className = 'review-item';
+ const thumbCanvas = document.createElement('canvas');
+ thumbCanvas.width = 36;
+ thumbCanvas.height = 36;
+ thumbCanvas.className = 'review-item-icon';
+ drawPrizeThumbnail(thumbCanvas, r.prizeIndex);
+ item.innerHTML = `
+ <div class="review-item-num">第${i + 1}次<br><span style="font-size:11px;color:var(--text-dim)">${r.score}分</span></div>
+ `;
+ item.appendChild(thumbCanvas);
+ item.insertAdjacentHTML('beforeend', `<div class="review-item-name">${prize.name}</div>`);
+ list.appendChild(item);
+ });
+ }
+ showPage('review');
+}
+function initMuteBtn() {
+ const btn = document.getElementById('btn-mute');
+ btn.addEventListener('click', () => {
+ const muted = Audio8bit.toggleMute();
+ btn.textContent = muted ? '🔇' : '🔊';
+ });
+}
+function initPauseBtn() {
+ const btn = document.getElementById('btn-pause');
+ btn.addEventListener('click', () => {
+ if (state.currentPage !== 'game') return;
+ Audio8bit.click();
+ const nowPaused = Game.togglePause();
+ btn.textContent = nowPaused ? '▶' : '⏸';
+ btn.style.borderColor = nowPaused ? '#00ffff' : 'var(--text-dim)';
+ btn.style.color = nowPaused ? '#00ffff' : 'var(--text-dim)';
+ });
+}
+function resetPauseBtn() {
+ const btn = document.getElementById('btn-pause');
+ btn.textContent = '⏸';
+ btn.style.borderColor = 'var(--text-dim)';
+ btn.style.color = 'var(--text-dim)';
+}
+window.addEventListener('resize', () => {
+ if (state.currentPage === 'game') Game.resizeCanvas();
+ const pc = document.getElementById('canvas-particles');
+ pc.width = window.innerWidth;
+ pc.height = window.innerHeight;
+});
+document.addEventListener('DOMContentLoaded', () => {
+ const pc = document.getElementById('canvas-particles');
+ pc.width = window.innerWidth;
+ pc.height = window.innerHeight;
+ Renderer.initParticles(pc);
+ Game.init(document.getElementById('canvas-game'), {
+ onScoreUpdate,
+ onDie,
+ onUnlock61,
+ });
+ initMuteBtn();
+ initPauseBtn();
+ initStartPage();
+ showPage('start');
+ document.addEventListener('touchstart', () => Audio8bit.unlock(), { once: true });
+ document.addEventListener('click', () => Audio8bit.unlock(), { once: true });
+});</script>
+</body>
+</html>
