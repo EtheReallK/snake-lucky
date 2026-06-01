@@ -180,9 +180,17 @@
 
     <div class="divider"></div>
 
-    <div style="font-size:13px;color:var(--text-dim)">— 你的抽奖记录 —</div>
+    <!-- 已抽中 -->
+    <div style="font-size:13px;color:var(--text-gold);letter-spacing:1px;">✨ 已抽中</div>
+    <div id="review-list-won" class="review-list">
+      <!-- JS动态生成 -->
+    </div>
 
-    <div id="review-list" class="review-list">
+    <div class="divider"></div>
+
+    <!-- 未抽中 -->
+    <div style="font-size:13px;color:var(--text-dim);letter-spacing:1px;">— 未抽中 —</div>
+    <div id="review-list-missed" class="review-list">
       <!-- JS动态生成 -->
     </div>
 

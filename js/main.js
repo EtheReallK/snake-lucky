@@ -299,55 +299,79 @@ function showSurprisePage() {
 /* ===== 回顾页 ===== */
 function showReviewPage() {
   const data = Storage.get();
-  const list = document.getElementById('review-list');
-  list.innerHTML = '';
+  const wonList    = document.getElementById('review-list-won');
+  const missedList = document.getElementById('review-list-missed');
+  wonList.innerHTML = '';
+  missedList.innerHTML = '';
 
-  if (data.lotteryResults.length === 0) {
-    list.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">还没有抽奖记录</div>';
+  // 已抽中的奖品索引集合
+  const wonIndices = new Set(data.lotteryResults.map(r => r.prizeIndex));
+
+  // 若触发了惊喜奖，也算抽中烟花（index 0）
+  const hasFirework = wonIndices.has(0);
+  const allDone = (MAX_GAMES - data.gamesPlayed) === 0;
+  const gotSurprise = allDone && !hasFirework && data.lotteryResults.length === MAX_GAMES;
+  if (gotSurprise) wonIndices.add(0); // 惊喜奖也算中了烟花
+
+  /* ── 已抽中列表 ── */
+  if (wonIndices.size === 0) {
+    wonList.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">还没有抽奖记录</div>';
   } else {
     data.lotteryResults.forEach((r, i) => {
       const prize = PRIZES[r.prizeIndex];
       if (!prize) return;
-
-      const item = document.createElement('div');
-      item.className = 'review-item';
-
-      const thumbCanvas = document.createElement('canvas');
-      thumbCanvas.width = 36;
-      thumbCanvas.height = 36;
-      thumbCanvas.className = 'review-item-icon';
-      drawPrizeThumbnail(thumbCanvas, r.prizeIndex);
-
-      item.innerHTML = `
-        <div class="review-item-num">第${i + 1}次<br><span style="font-size:11px;color:var(--text-dim)">${r.score}分</span></div>
-      `;
-      item.appendChild(thumbCanvas);
-      item.insertAdjacentHTML('beforeend', `<div class="review-item-name">${prize.name}</div>`);
-      list.appendChild(item);
+      wonList.appendChild(makeReviewItem(prize, r.prizeIndex, `第${i+1}次`, r.score + '分', false));
     });
 
-    // 若触发了惊喜奖，额外显示
-    const hasFirework = data.lotteryResults.some(r => r.prizeIndex === 0);
-    if (!hasFirework && data.lotteryResults.length === MAX_GAMES) {
-      const item = document.createElement('div');
-      item.className = 'review-item';
-      item.style.borderColor = '#4488ff';
-      item.style.boxShadow = '0 0 8px #4488ff44';
-
-      const thumbCanvas = document.createElement('canvas');
-      thumbCanvas.width = 36;
-      thumbCanvas.height = 36;
-      thumbCanvas.className = 'review-item-icon';
-      drawPrizeThumbnail(thumbCanvas, 0);
-
-      item.innerHTML = `<div class="review-item-num" style="color:#4488ff">🎊<br>惊喜</div>`;
-      item.appendChild(thumbCanvas);
-      item.insertAdjacentHTML('beforeend', `<div class="review-item-name" style="color:#88aaff">一起看烟花<br><span style="font-size:11px;color:var(--text-dim)">倒霉蛋特别奖</span></div>`);
-      list.appendChild(item);
+    // 惊喜奖条目
+    if (gotSurprise) {
+      wonList.appendChild(makeReviewItem(PRIZES[0], 0, '🎊', '惊喜奖', true));
     }
   }
 
+  /* ── 未抽中列表 ── */
+  const missed = PRIZES.filter((_, i) => !wonIndices.has(i));
+  if (missed.length === 0) {
+    missedList.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">全部抽中了！</div>';
+  } else {
+    missed.forEach(prize => {
+      missedList.appendChild(makeReviewItem(prize, prize.id, null, null, false, true));
+    });
+  }
+
   showPage('review');
+}
+
+/* ===== 工具：生成回顾列表条目 ===== */
+function makeReviewItem(prize, prizeIdx, label, sublabel, isSurprise, isDimmed = false) {
+  const item = document.createElement('div');
+  item.className = 'review-item';
+  if (isSurprise) {
+    item.style.borderColor = '#4488ff';
+    item.style.boxShadow = '0 0 8px #4488ff44';
+  }
+  if (isDimmed) {
+    item.style.opacity = '0.45';
+  }
+
+  const thumbCanvas = document.createElement('canvas');
+  thumbCanvas.width = 36;
+  thumbCanvas.height = 36;
+  thumbCanvas.className = 'review-item-icon';
+  drawPrizeThumbnail(thumbCanvas, prizeIdx);
+
+  const numColor = isSurprise ? '#4488ff' : 'var(--text-dim)';
+  const nameColor = isSurprise ? '#88aaff' : (isDimmed ? 'var(--text-dim)' : 'var(--text-white)');
+  const subText = isSurprise ? '倒霉蛋特别奖' : (sublabel || '');
+
+  item.innerHTML = label
+    ? `<div class="review-item-num" style="color:${numColor}">${label}<br><span style="font-size:11px;color:var(--text-dim)">${subText}</span></div>`
+    : `<div class="review-item-num" style="min-width:36px"></div>`;
+
+  item.appendChild(thumbCanvas);
+  item.insertAdjacentHTML('beforeend',
+    `<div class="review-item-name" style="color:${nameColor}">${prize.name}</div>`);
+  return item;
 }
 
 /* ===== 静音按钮 ===== */

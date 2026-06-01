@@ -65,14 +65,14 @@ const PRIZES = [
   },
 ];
 
-/* ===== 随机洗牌（Fisher-Yates） ===== */
+/* ===== 随机洗牌（Fisher-Yates，均等概率） ===== */
 function shufflePrizes() {
-  const arr = PRIZES.map((_, i) => i); // 索引数组
+  const arr = PRIZES.map((_, i) => i);
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
-  return arr; // 返回洗牌后的奖品索引顺序
+  return arr;
 }
 
 /* ===================================================
