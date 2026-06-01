@@ -216,13 +216,68 @@ function showResultPage(prizeIdx) {
   const data = Storage.get();
   const gamesLeft = MAX_GAMES - data.gamesPlayed;
   const btnNext = document.getElementById('btn-result-next');
+
+  // 判断是否触发惊喜奖：三次用完 + 所有抽奖结果里没有烟花（prizeIndex === 0）
+  const allDone = gamesLeft === 0;
+  const hasFirework = data.lotteryResults.some(r => r.prizeIndex === 0);
+  const triggerSurprise = allDone && !hasFirework;
+
   if (gamesLeft > 0) {
     btnNext.textContent = '继续游戏';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startGame(); };
+  } else if (triggerSurprise) {
+    btnNext.textContent = '🎊 领取特别惊喜！';
+    btnNext.className = 'btn btn-gold';
+    btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showSurprisePage(); };
   } else {
     btnNext.textContent = '查看全部奖品';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   }
+
+  showPage('result');
+}
+
+/* ===== 惊喜盲盒页 ===== */
+function showSurprisePage() {
+  const box = document.getElementById('surprise-box');
+  // 重置盲盒状态（防止重复进入）
+  box.classList.remove('flipped', 'dimmed');
+
+  box.onclick = () => {
+    if (box.classList.contains('flipped')) return;
+    Audio8bit.flipOpen();
+    // 绘制烟花缩略图到盲盒背面
+    const thumb = document.getElementById('canvas-surprise-thumb');
+    drawPrizeThumbnail(thumb, 0); // 0 = 烟花
+    box.classList.add('flipped');
+    setTimeout(() => showSurpriseResult(), 900);
+  };
+
+  showPage('surprise');
+}
+
+/* ===== 惊喜结果页（复用 result 页） ===== */
+function showSurpriseResult() {
+  // 复用结果页，但特殊标题和按钮
+  document.getElementById('result-title').textContent = '🎊 特别惊喜奖！';
+  document.getElementById('result-prize-name').textContent = '一起看烟花';
+  document.getElementById('result-desc').textContent = '你有看过蓝色的烟花吗？以后就有啦';
+
+  const canvas = document.getElementById('canvas-prize');
+  canvas.width = 180;
+  canvas.height = 180;
+  drawPrizeLarge(canvas, 0); // 烟花
+
+  Audio8bit.win();
+  setTimeout(() => {
+    const colors = ['#4488ff', '#88aaff', '#ffffff', '#aaccff', '#ffd700'];
+    Renderer.burst(window.innerWidth / 2, window.innerHeight / 2, colors, 200);
+  }, 300);
+
+  const btnNext = document.getElementById('btn-result-next');
+  btnNext.textContent = '查看全部奖品';
+  btnNext.className = 'btn';
+  btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
 
   showPage('result');
 }
@@ -256,6 +311,26 @@ function showReviewPage() {
       item.insertAdjacentHTML('beforeend', `<div class="review-item-name">${prize.name}</div>`);
       list.appendChild(item);
     });
+
+    // 若触发了惊喜奖，额外显示
+    const hasFirework = data.lotteryResults.some(r => r.prizeIndex === 0);
+    if (!hasFirework && data.lotteryResults.length === MAX_GAMES) {
+      const item = document.createElement('div');
+      item.className = 'review-item';
+      item.style.borderColor = '#4488ff';
+      item.style.boxShadow = '0 0 8px #4488ff44';
+
+      const thumbCanvas = document.createElement('canvas');
+      thumbCanvas.width = 36;
+      thumbCanvas.height = 36;
+      thumbCanvas.className = 'review-item-icon';
+      drawPrizeThumbnail(thumbCanvas, 0);
+
+      item.innerHTML = `<div class="review-item-num" style="color:#4488ff">🎊<br>惊喜</div>`;
+      item.appendChild(thumbCanvas);
+      item.insertAdjacentHTML('beforeend', `<div class="review-item-name" style="color:#88aaff">一起看烟花<br><span style="font-size:11px;color:var(--text-dim)">倒霉蛋特别奖</span></div>`);
+      list.appendChild(item);
+    }
   }
 
   showPage('review');
