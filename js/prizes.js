@@ -145,7 +145,7 @@ function drawFirework(ctx, cx, cy, size) {
     cx - r * 0.1, cy + r * 0.08, r * 0.2
   );
   lensGrad.addColorStop(0, '#3355aa88');
-  lensGrad.addColorStop(0.5, '#1122440');
+  lensGrad.addColorStop(0.5, '#112244');
   lensGrad.addColorStop(1, '#000000');
   ctx.beginPath();
   ctx.arc(cx - r * 0.1, cy + r * 0.08, r * 0.2, 0, Math.PI * 2);
