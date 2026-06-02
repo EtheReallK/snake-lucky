@@ -292,8 +292,11 @@
 
 /* ===== 结果页 ===== */
 #page-result {
-  justify-content: center;
+  justify-content: flex-start;
   gap: 18px;
+  overflow-y: auto;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 .result-title {
