@@ -47,6 +47,11 @@ function initStartPage() {
 /* ===== 游戏页 ===== */
 function startGame() {
   const data = Storage.get();
+  // 防止超出次数限制
+  if (data.gamesPlayed >= MAX_GAMES) {
+    showReviewPage();
+    return;
+  }
   state.gameIndex = data.gamesPlayed; // 0-based，还没increment
   state.currentScore = 0;
   state.currentUnlocked = false;
@@ -225,7 +230,7 @@ function showResultPage(prizeIdx) {
   const btnReview = document.getElementById('btn-result-review');
   btnReview.style.display = 'none'; // 默认隐藏
 
-  if (gamesLeft > 0) {
+  if (gamesLeft > 0 && data.gamesPlayed < MAX_GAMES) {
     btnNext.textContent = '继续游戏';
     btnNext.className = 'btn';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startGame(); };
