@@ -30,7 +30,7 @@ const Storage = (() => {
 
   function incrementGames() {
     const d = load();
-    d.gamesPlayed = Math.min(d.gamesPlayed + 1, MAX_GAMES);
+    d.gamesPlayed = Math.min(d.gamesPlayed + 1, 4); // 上限4次
     save(d);
     return d;
   }
