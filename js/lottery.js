@@ -47,21 +47,35 @@ const Lottery = (() => {
     return shufflePrizes();
   }
 
-  /* 保底布局：已翻开格子保持原样，未翻开格子全部填充 missedPool 的奖品（可重复）*/
+  /* 保底布局：已抽中的奖品原位保留，其余格子全填 missedPool（可重复）*/
   function buildGuaranteedLayout(wonIndices, missedPool) {
-    const layout = [];
-    // 先统计上一次布局已翻开的格子（已抽中的奖品位置）
     const data = Storage.get();
     const prevLayout = data.lotteryLayout;
 
+    // 先确定已抽中奖品要占哪些格子
+    // 有上一次布局：按原位放已抽中的奖品
+    // 没有布局：把已抽中的奖品随机分配到前几格
+    const layout = new Array(9).fill(null);
+
+    if (prevLayout && prevLayout.length === 9) {
+      // 已有布局：已抽中的格子保持原位
+      for (let i = 0; i < 9; i++) {
+        if (wonIndices.has(prevLayout[i])) {
+          layout[i] = prevLayout[i];
+        }
+      }
+    } else {
+      // 没有布局：把已抽中的奖品依次放到前几个格子
+      let pos = 0;
+      for (const idx of wonIndices) {
+        if (pos < 9) layout[pos++] = idx;
+      }
+    }
+
+    // 剩余空格全填 missedPool（可重复）
     for (let i = 0; i < 9; i++) {
-      const prevPrize = prevLayout ? prevLayout[i] : null;
-      if (prevPrize !== null && wonIndices.has(prevPrize)) {
-        // 已翻开：保持原奖品
-        layout.push(prevPrize);
-      } else {
-        // 未翻开：随机从 missedPool 中取一个（可重复）
-        layout.push(missedPool[Math.floor(Math.random() * missedPool.length)]);
+      if (layout[i] === null) {
+        layout[i] = missedPool[Math.floor(Math.random() * missedPool.length)];
       }
     }
     return layout;
