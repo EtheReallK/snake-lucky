@@ -72,11 +72,16 @@ function showResultPage(prizeIdx) {
   if (gamesLeft > 0) {
     btnNext.textContent = '继续抽奖';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startLottery(); };
+    // 未抽完也可以查看已有记录
+    btnReview.style.display = '';
+    btnReview.textContent = '查看已抽记录';
+    btnReview.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   } else if (triggerSurprise) {
     btnNext.textContent = '🎊 领取特别惊喜！';
     btnNext.className = 'btn btn-gold';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showSurprisePage(); };
     btnReview.style.display = '';
+    btnReview.textContent = '查看全部奖品 →';
     btnReview.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   } else {
     btnNext.textContent = '查看全部奖品';
@@ -151,6 +156,16 @@ function showDonePage() {
 /* ===== 回顾页 ===== */
 function showReviewPage() {
   const data = Storage.get();
+  const gamesLeft = MAX_GAMES - data.gamesPlayed;
+
+  // 标题和返回按钮根据是否抽完调整
+  document.getElementById('review-title').textContent = gamesLeft > 0 ? '📋 已抽记录' : '🎊 活动已结束';
+  const btnBack = document.getElementById('review-btn-back');
+  if (gamesLeft > 0) {
+    btnBack.style.display = '';
+  } else {
+    btnBack.style.display = 'none';
+  }
   const wonList    = document.getElementById('review-list-won');
   const missedList = document.getElementById('review-list-missed');
   wonList.innerHTML = '';
