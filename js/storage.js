@@ -30,7 +30,7 @@ const Storage = (() => {
 
   function incrementGames() {
     const d = load();
-    d.gamesPlayed = Math.min(d.gamesPlayed + 1, 3);
+    d.gamesPlayed = Math.min(d.gamesPlayed + 1, MAX_GAMES);
     save(d);
     return d;
   }
