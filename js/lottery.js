@@ -15,19 +15,24 @@ const Lottery = (() => {
     let layout;
 
     if (isLastRound) {
-      // ── 第4次：检查保底 ──
+      // ── 第4次：先检查是否需要保底 ──
       const aWon = POOL_A.some(id => wonIndices.has(id));
       const bWon = POOL_B.some(id => wonIndices.has(id));
 
       if (!aWon || !bWon) {
-        // 需要保底，重新生成布局
+        // 需要保底：重新生成布局（已抽中的原位保留，其余填保底池）
         const missedPool = !aWon ? POOL_A : POOL_B;
         layout = buildGuaranteedLayout(wonIndices, missedPool);
+        Storage.saveLayout(layout);
       } else {
-        // A、B 都已有，正常布局
-        layout = buildNormalLayout(wonIndices);
+        // A、B 都已有：复用已有布局，不重新洗牌
+        if (data.lotteryLayout && data.lotteryLayout.length === 9) {
+          layout = data.lotteryLayout;
+        } else {
+          layout = buildNormalLayout(wonIndices);
+          Storage.saveLayout(layout);
+        }
       }
-      Storage.saveLayout(layout);
     } else {
       // ── 非最后一次：复用已有布局或新生成 ──
       if (data.lotteryLayout && data.lotteryLayout.length === 9) {
