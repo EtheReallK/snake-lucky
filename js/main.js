@@ -28,20 +28,12 @@ function startLottery() {
   // 更新机会圆点
   updateChanceDots(document.getElementById('lottery-chances'), data.gamesPlayed);
 
-  // 记录本次抽奖（占位）
-  Storage.recordLottery(data.gamesPlayed, 0, -1);
   Storage.incrementGames();
 
   showPage('lottery');
   Lottery.prepare((prizeIdx) => {
-    // 更新真实奖品索引
-    try {
-      const raw = JSON.parse(localStorage.getItem('snakeLucky_v1') || '{}');
-      if (raw.lotteryResults && raw.lotteryResults.length > 0) {
-        raw.lotteryResults[raw.lotteryResults.length - 1].prizeIndex = prizeIdx;
-        localStorage.setItem('snakeLucky_v1', JSON.stringify(raw));
-      }
-    } catch (e) {}
+    // 抽完后才记录真实奖品
+    Storage.recordLottery(data.gamesPlayed, 0, prizeIdx);
     showResultPage(prizeIdx);
   });
 }
@@ -137,6 +129,7 @@ function showSurprisePage() {
 
 /* ===== 次数用完页 ===== */
 function showDonePage() {
+  Storage.clearLayout(); // 4次全结束，清除布局
   const data = Storage.get();
   const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
 

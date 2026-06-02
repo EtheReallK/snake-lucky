@@ -143,7 +143,6 @@ const Lottery = (() => {
     }, 300);
 
     setTimeout(() => {
-      Storage.clearLayout();
       if (onResult) onResult(prizeIdx);
     }, 900);
   }
