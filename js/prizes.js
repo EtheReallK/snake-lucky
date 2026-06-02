@@ -1,69 +1,78 @@
 /* ===== 奖品池配置 ===== */
+
+// 池标识：'fixed' | 'A' | 'B'
 const PRIZES = [
+  // ── 固定奖品（index 0）──
   {
-    id: 0,
-    name: '无条件配合yy拍胶片',
-    desc: '一份耕耘一份收获，现在你已经收获了蓝色烟花，希望你无条件配合yy拍胶片！不接受异议',
+    id: 0, pool: 'fixed',
+    name: '无条件配合yy大王拍胶片',
+    desc: '你不管，你就配合，很重要！',
     color: '#4488ff',
     draw: drawFirework,
   },
+  // ── A 池（index 1-4，给yy的）──
   {
-    id: 1,
-    name: '今天吃啥决策卡',
-    desc: '不知道吃什么的时候yy老师大发慈悲帮你决定一次',
-    color: '#ff88cc',
-    draw: drawDecisionCard,
+    id: 1, pool: 'A',
+    name: '给yy大王亲手做一顿饭',
+    desc: '一荤一素一汤一主食',
+    color: '#ff44aa',
+    draw: drawMeal,
   },
   {
-    id: 2,
-    name: '手枪腿会有的',
-    desc: '儿童节特许你获得手枪腿一枚，30个自然日内兑换',
+    id: 2, pool: 'A',
+    name: '半夜出门请yy大王吃小龙虾',
+    desc: '半夜和小龙虾都不是必选',
     color: '#ff6644',
-    draw: drawLeg,
+    draw: drawDinner,
   },
   {
-    id: 3,
-    name: '牙齿和冰淇淋兼得',
-    desc: '我乱说的，吃冰淇淋的时候要一心一意，不要分心想牙齿',
-    color: '#aaeeff',
-    draw: drawIceCream,
-  },
-  {
-    id: 4,
-    name: '公交车靠窗位置',
-    desc: 'yy老师倾情赞助位置一个，公交车票自备',
+    id: 3, pool: 'A',
+    name: '脾气和耐心无条件变好一周卡',
+    desc: '嗯嗯嗯！',
     color: '#44ff88',
-    draw: drawBusWindow,
+    draw: drawApology,
   },
   {
-    id: 5,
-    name: '欠yy一顿饭',
-    desc: '餐标不能缩减，需要孙丽莎亲手做',
+    id: 4, pool: 'A',
+    name: '给yy大王准备一个大惊喜',
+    desc: '要这———么大的惊喜',
+    color: '#ffdd44',
+    draw: drawCake,
+  },
+  // ── B 池（index 5-8，给ls的）──
+  {
+    id: 5, pool: 'B',
+    name: 'yy大王的一顿饭',
+    desc: '亲手做的，餐标待定',
     color: '#ffaa44',
     draw: drawMeal,
   },
   {
-    id: 6,
-    name: '无条件给yy道歉',
-    desc: '不论何时！不论何地！随时道歉！',
-    color: '#ff44aa',
-    draw: drawApology,
+    id: 6, pool: 'B',
+    name: 'yy大王的一个故事',
+    desc: '有进展的时候同步你',
+    color: '#ff88cc',
+    draw: drawDecisionCard,
   },
   {
-    id: 7,
-    name: 'yy想要蛋糕就可以有',
-    desc: '想不到其他了，万一抽到这个就欠我一个蛋糕吧',
-    color: '#ffdd44',
-    draw: drawCake,
+    id: 7, pool: 'B',
+    name: 'yy大王读一本书',
+    desc: '页数希望控制在200页以内',
+    color: '#aaeeff',
+    draw: drawIceCream,
   },
   {
-    id: 8,
-    name: '请yy吃饭',
-    desc: '想不到其他了，万一抽到这个就请我吃一顿贵贵的饭吧',
-    color: '#ff8844',
-    draw: drawDinner,
+    id: 8, pool: 'B',
+    name: 'yy大王的一句求求你',
+    desc: '呵呵',
+    color: '#aa44ff',
+    draw: drawBusWindow,
   },
 ];
+
+// 按池分组，方便保底逻辑使用
+const POOL_A = PRIZES.filter(p => p.pool === 'A').map(p => p.id); // [1,2,3,4]
+const POOL_B = PRIZES.filter(p => p.pool === 'B').map(p => p.id); // [5,6,7,8]
 
 /* ===== 随机洗牌（Fisher-Yates，均等概率） ===== */
 function shufflePrizes() {

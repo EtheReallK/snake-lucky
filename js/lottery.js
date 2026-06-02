@@ -1,6 +1,6 @@
 /* ===== 盲盒抽奖逻辑 ===== */
 const Lottery = (() => {
-  let shuffledPrizes = []; // 当前9格布局（奖品索引数组）
+  let shuffledPrizes = [];
   let selectedPrize = null;
   let onResult = null;
 
@@ -10,16 +10,61 @@ const Lottery = (() => {
 
     const data = Storage.get();
     const wonIndices = new Set(data.lotteryResults.map(r => r.prizeIndex));
+    const isLastRound = data.gamesPlayed === MAX_GAMES - 1; // 即将进行第4次
 
-    // 若已有持久化布局则复用，否则重新洗牌并保存
-    if (data.lotteryLayout && data.lotteryLayout.length === 9) {
-      shuffledPrizes = data.lotteryLayout;
+    let layout;
+
+    if (isLastRound) {
+      // ── 第4次：检查保底 ──
+      const aWon = POOL_A.some(id => wonIndices.has(id));
+      const bWon = POOL_B.some(id => wonIndices.has(id));
+
+      if (!aWon || !bWon) {
+        // 需要保底，重新生成布局
+        const missedPool = !aWon ? POOL_A : POOL_B;
+        layout = buildGuaranteedLayout(wonIndices, missedPool);
+      } else {
+        // A、B 都已有，正常布局
+        layout = buildNormalLayout(wonIndices);
+      }
+      Storage.saveLayout(layout);
     } else {
-      shuffledPrizes = shufflePrizes();
-      Storage.saveLayout(shuffledPrizes);
+      // ── 非最后一次：复用已有布局或新生成 ──
+      if (data.lotteryLayout && data.lotteryLayout.length === 9) {
+        layout = data.lotteryLayout;
+      } else {
+        layout = buildNormalLayout(wonIndices);
+        Storage.saveLayout(layout);
+      }
     }
 
+    shuffledPrizes = layout;
     renderBoxes(wonIndices);
+  }
+
+  /* 普通布局：Fisher-Yates 洗牌，已抽中的保持原位 */
+  function buildNormalLayout(wonIndices) {
+    return shufflePrizes();
+  }
+
+  /* 保底布局：已翻开格子保持原样，未翻开格子全部填充 missedPool 的奖品（可重复）*/
+  function buildGuaranteedLayout(wonIndices, missedPool) {
+    const layout = [];
+    // 先统计上一次布局已翻开的格子（已抽中的奖品位置）
+    const data = Storage.get();
+    const prevLayout = data.lotteryLayout;
+
+    for (let i = 0; i < 9; i++) {
+      const prevPrize = prevLayout ? prevLayout[i] : null;
+      if (prevPrize !== null && wonIndices.has(prevPrize)) {
+        // 已翻开：保持原奖品
+        layout.push(prevPrize);
+      } else {
+        // 未翻开：随机从 missedPool 中取一个（可重复）
+        layout.push(missedPool[Math.floor(Math.random() * missedPool.length)]);
+      }
+    }
+    return layout;
   }
 
   function renderBoxes(wonIndices) {
@@ -54,15 +99,11 @@ const Lottery = (() => {
       grid.appendChild(item);
 
       if (alreadyWon) {
-        // 已抽中：直接翻开显示，不可点击
         drawPrizeThumbnail(thumbCanvas, prizeIdx);
-        // 用 setTimeout 0 让 DOM 先渲染再加 flipped，触发动画
         setTimeout(() => {
-          item.classList.add('flipped');
-          item.classList.add('dimmed');
-        }, boxPos * 60); // 错开时间，逐个翻开更好看
+          item.classList.add('flipped', 'dimmed');
+        }, boxPos * 60);
       } else {
-        // 未抽中：正常可点击
         front.addEventListener('mouseenter', () => {
           if (!item.classList.contains('dimmed')) Audio8bit.hover();
         });
@@ -81,14 +122,12 @@ const Lottery = (() => {
     drawPrizeThumbnail(thumbCanvas, prizeIdx);
     item.classList.add('flipped');
 
-    // 其余未抽中的盒子变暗
     setTimeout(() => {
       document.querySelectorAll('.box-item').forEach(el => {
         if (el !== item) el.classList.add('dimmed');
       });
     }, 300);
 
-    // 跳转结果页，同时清除布局缓存（下次重新洗牌）
     setTimeout(() => {
       Storage.clearLayout();
       if (onResult) onResult(prizeIdx);

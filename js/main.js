@@ -1,5 +1,5 @@
 /* ===== 状态机 & 页面路由 ===== */
-const MAX_GAMES = 3;
+const MAX_GAMES = 4;
 const UNLOCK_SCORE = 61;
 
 let state = {
@@ -217,10 +217,10 @@ function showResultPage(prizeIdx) {
   const gamesLeft = MAX_GAMES - data.gamesPlayed;
   const btnNext = document.getElementById('btn-result-next');
 
-  // 判断是否触发惊喜奖：三次用完 + 所有抽奖结果里没有烟花（prizeIndex === 0）
+  // 判断是否触发惊喜奖：四次用完 + 所有抽奖结果里没有固定奖品（prizeIndex === 0）
   const allDone = gamesLeft === 0;
-  const hasFirework = data.lotteryResults.some(r => r.prizeIndex === 0);
-  const triggerSurprise = allDone && !hasFirework;
+  const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
+  const triggerSurprise = allDone && !hasFixed;
 
   const btnReview = document.getElementById('btn-result-review');
   btnReview.style.display = 'none'; // 默认隐藏
@@ -307,11 +307,11 @@ function showReviewPage() {
   // 已抽中的奖品索引集合
   const wonIndices = new Set(data.lotteryResults.map(r => r.prizeIndex));
 
-  // 若触发了惊喜奖，也算抽中烟花（index 0）
-  const hasFirework = wonIndices.has(0);
+  // 若触发了惊喜奖，也算抽中固定奖品（index 0）
+  const hasFixed = wonIndices.has(0);
   const allDone = (MAX_GAMES - data.gamesPlayed) === 0;
-  const gotSurprise = allDone && !hasFirework && data.lotteryResults.length === MAX_GAMES;
-  if (gotSurprise) wonIndices.add(0); // 惊喜奖也算中了烟花
+  const gotSurprise = allDone && !hasFixed && data.lotteryResults.length === MAX_GAMES;
+  if (gotSurprise) wonIndices.add(0);
 
   /* ── 已抽中列表 ── */
   if (wonIndices.size === 0) {

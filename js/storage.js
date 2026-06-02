@@ -6,7 +6,7 @@ const Storage = (() => {
     gamesPlayed: 0,       // 已玩次数
     bestScore: 0,         // 历史最高分
     lotteryResults: [],   // [{game, score, prizeIndex}]
-    lotteryUsed: [false, false, false], // 各次是否已抽
+    lotteryUsed: [false, false, false, false], // 各次是否已抽（4次）
     lotteryLayout: null,  // 当前抽奖的9格布局 [prizeIdx, ...]，跨局持久化
   };
 
