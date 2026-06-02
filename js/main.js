@@ -16,32 +16,25 @@ function updateChanceDots(container, gamesPlayed) {
 }
 
 /* ===== 抽盲盒入口 ===== */
-let _lotteryLock = false; // 防重入锁
-
 function startLottery() {
-  if (_lotteryLock) return;
-  _lotteryLock = true; // 立即加锁，防止重复进入
-
-  // 重新读最新数据（防止快速点击时用到旧快照）
   const data = Storage.get();
 
   // 次数用完
   if (data.gamesPlayed >= MAX_GAMES) {
-    _lotteryLock = false;
     showDonePage();
     return;
   }
 
-  const gameIndex = data.gamesPlayed; // 记录当前局序号（0-based）
-
-  // 更新机会圆点
-  updateChanceDots(document.getElementById('lottery-chances'), gameIndex);
-
-  Storage.incrementGames();
+  // 更新机会圆点（显示当前剩余，还未扣除本次）
+  updateChanceDots(document.getElementById('lottery-chances'), data.gamesPlayed);
 
   showPage('lottery');
+
+  // 进入盲盒页，准备布局；点击盲盒时才扣次数
   Lottery.prepare((prizeIdx) => {
-    _lotteryLock = false; // 抽完解锁
+    // 用户真正点击了盲盒，此时才记录
+    const gameIndex = Storage.get().gamesPlayed;
+    Storage.incrementGames();
     Storage.recordLottery(gameIndex, 0, prizeIdx);
     showResultPage(prizeIdx);
   });
