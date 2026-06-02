@@ -157,13 +157,22 @@ function showDeadPage(score, unlocked) {
     }
   }
 
-  // 再玩一次 / 查看结果
+  // 再玩一次 / 惊喜 / 查看结果
   if (gamesLeft > 0) {
     btnRetry.textContent = '再玩一次';
     btnRetry.onclick = () => { Audio8bit.click(); startGame(); };
   } else {
-    btnRetry.textContent = '查看全部结果';
-    btnRetry.onclick = () => { Audio8bit.click(); showReviewPage(); };
+    // 四次用完，检查是否触发惊喜
+    const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
+    if (!hasFixed) {
+      btnRetry.textContent = '🎊 领取特别惊喜！';
+      btnRetry.className = 'btn btn-gold';
+      btnRetry.onclick = () => { Audio8bit.click(); showSurprisePage(); };
+    } else {
+      btnRetry.textContent = '查看全部结果';
+      btnRetry.className = 'btn';
+      btnRetry.onclick = () => { Audio8bit.click(); showReviewPage(); };
+    }
   }
 
   // 爆炸粒子（仅胜利）
