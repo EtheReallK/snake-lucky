@@ -10,7 +10,7 @@ const Lottery = (() => {
 
     const data = Storage.get();
     const wonIndices = new Set(data.lotteryResults.map(r => r.prizeIndex));
-    const isLastRound = data.gamesPlayed === MAX_GAMES - 1; // 即将进行第4次
+    const isLastRound = data.gamesPlayed === MAX_GAMES; // 第4次（increment后已是MAX_GAMES）
 
     let layout;
 

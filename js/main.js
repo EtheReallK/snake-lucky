@@ -1,24 +1,13 @@
 /* ===== 状态机 & 页面路由 ===== */
 const MAX_GAMES = 4;
-const UNLOCK_SCORE = 61;
-
-let state = {
-  currentPage: 'start',
-  gameIndex: 0,      // 当前是第几局（0-based）
-  currentScore: 0,
-  currentUnlocked: false,
-};
 
 /* ===== 页面切换 ===== */
 function showPage(id) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
-  state.currentPage = id;
 }
 
 /* ===== 工具 ===== */
-function formatScore(n) { return String(n).padStart(4, '0'); }
-
 function updateChanceDots(container, gamesPlayed) {
   const dots = container.querySelectorAll('.chance-dot');
   dots.forEach((d, i) => {
@@ -26,176 +15,26 @@ function updateChanceDots(container, gamesPlayed) {
   });
 }
 
-/* ===== 开始页 ===== */
-function initStartPage() {
+/* ===== 抽盲盒入口 ===== */
+function startLottery() {
   const data = Storage.get();
-  const gamesLeft = MAX_GAMES - data.gamesPlayed;
 
-  document.getElementById('start-best').textContent = 'BEST: ' + formatScore(data.bestScore);
-  updateChanceDots(document.getElementById('start-chances'), data.gamesPlayed);
-
-  const btn = document.getElementById('btn-start');
+  // 次数用完
   if (data.gamesPlayed >= MAX_GAMES) {
-    btn.textContent = '查看结果';
-    btn.onclick = () => { Audio8bit.click(); showReviewPage(); };
-  } else {
-    btn.textContent = '开始游戏';
-    btn.onclick = () => { Audio8bit.click(); startGame(); };
-  }
-}
-
-/* ===== 游戏页 ===== */
-function startGame() {
-  const data = Storage.get();
-  // 防止超出次数限制
-  if (data.gamesPlayed >= MAX_GAMES) {
-    showReviewPage();
+    showDonePage();
     return;
   }
-  state.gameIndex = data.gamesPlayed; // 0-based，还没increment
-  state.currentScore = 0;
-  state.currentUnlocked = false;
 
-  // 更新UI
-  updateChanceDots(document.getElementById('game-chances'), data.gamesPlayed);
-  updateProgressBar(0);
+  // 更新机会圆点
+  updateChanceDots(document.getElementById('lottery-chances'), data.gamesPlayed);
 
-  showPage('game');
-  resetPauseBtn();
-  Renderer.stopParticles();
-
-  // 延迟两帧再启动，确保页面布局已完成、canvas 尺寸正确
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      Game.resizeCanvas();
-      Game.start(data.bestScore);
-    });
-  });
-}
-
-function updateProgressBar(score) {
-  const TARGET = 61;
-  const pct = Math.min(score / TARGET * 100, 100);
-  const fill = document.getElementById('progress-bar-fill');
-  const glow = document.getElementById('progress-bar-glow');
-  const label = document.getElementById('progress-label');
-  const scoreEl = document.getElementById('progress-score');
-  if (!fill) return;
-
-  fill.style.width = pct + '%';
-  glow.style.width = pct + '%';
-  scoreEl.textContent = score + ' / ' + TARGET;
-
-  if (score >= TARGET) {
-    fill.classList.add('full');
-    glow.classList.add('full');
-    label.textContent = '🎉 盲盒已解锁！';
-    label.className = 'progress-label unlocked';
-  } else {
-    fill.classList.remove('full');
-    glow.classList.remove('full');
-    label.textContent = '还差 ' + (TARGET - score) + ' 分解锁盲盒 🎁';
-    label.className = 'progress-label';
-  }
-}
-
-function onScoreUpdate(score) {
-  state.currentScore = score;
-  updateProgressBar(score);
-}
-
-function onUnlock61() {
-  state.currentUnlocked = true;
-  updateProgressBar(61);
-}
-
-function onDie(score, unlocked) {
-  // 记录本局
+  // 记录本次抽奖（占位）
+  Storage.recordLottery(data.gamesPlayed, 0, -1);
   Storage.incrementGames();
-  Storage.updateBest(score);
-  showDeadPage(score, unlocked);
-}
 
-/* ===== 结束页 ===== */
-function showDeadPage(score, unlocked) {
-  const data = Storage.get();
-  document.getElementById('dead-score').textContent = formatScore(score);
-  document.getElementById('dead-best').textContent = formatScore(data.bestScore);
-
-  const title = document.getElementById('dead-title');
-  const encourage = document.getElementById('dead-encourage');
-  const btnLottery = document.getElementById('btn-lottery');
-  const btnRetry = document.getElementById('btn-retry');
-
-  const gamesLeft = MAX_GAMES - data.gamesPlayed;
-
-  if (unlocked) {
-    title.className = 'dead-title win';
-    title.textContent = '🎉 YOU WIN!';
-    encourage.className = 'dead-encourage win-tip';
-    encourage.textContent = '✨ 恭喜解锁盲盒抽奖！快来开盲盒！';
-    btnLottery.style.display = '';
-    btnLottery.onclick = () => {
-      Audio8bit.click();
-      Storage.recordLottery(state.gameIndex, score, -1); // -1 占位，开盒后更新
-      showLotteryPage(score);
-    };
-  } else {
-    title.className = 'dead-title lose';
-    title.textContent = 'GAME OVER';
-    btnLottery.style.display = 'none';
-    const gap = UNLOCK_SCORE - score;
-    if (gap > 0 && gamesLeft > 0) {
-      encourage.className = 'dead-encourage';
-      encourage.textContent = `🎁 再差 ${gap} 分就能开盲盒！`;
-    } else if (gamesLeft === 0) {
-      encourage.className = 'dead-encourage';
-      encourage.textContent = '游戏机会已用完，查看你的抽奖结果吧 🎊';
-    } else {
-      encourage.className = 'dead-encourage';
-      encourage.textContent = '';
-    }
-  }
-
-  // 再玩一次 / 惊喜 / 查看结果
-  if (gamesLeft > 0) {
-    btnRetry.textContent = '再玩一次';
-    btnRetry.onclick = () => { Audio8bit.click(); startGame(); };
-  } else {
-    // 四次用完，检查是否触发惊喜
-    const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
-    if (!hasFixed) {
-      btnRetry.textContent = '🎊 领取特别惊喜！';
-      btnRetry.className = 'btn btn-gold';
-      btnRetry.onclick = () => { Audio8bit.click(); showSurprisePage(); };
-    } else {
-      btnRetry.textContent = '查看全部结果';
-      btnRetry.className = 'btn';
-      btnRetry.onclick = () => { Audio8bit.click(); showReviewPage(); };
-    }
-  }
-
-  // 爆炸粒子（仅胜利）
-  if (unlocked) {
-    setTimeout(() => {
-      const colors = ['#ffd700', '#ff6600', '#00ffff', '#ff44aa', '#44ff88'];
-      const cx = window.innerWidth / 2, cy = window.innerHeight / 3;
-      Renderer.burst(cx, cy, colors, 120);
-    }, 200);
-  }
-
-  showPage('dead');
-}
-
-/* ===== 盲盒页 ===== */
-function showLotteryPage(score) {
   showPage('lottery');
   Lottery.prepare((prizeIdx) => {
-    // 记录真实奖品
-    const data = Storage.get();
-    const lastResult = data.lotteryResults[data.lotteryResults.length - 1];
-    if (lastResult) lastResult.prizeIndex = prizeIdx;
-    // 直接更新localStorage
+    // 更新真实奖品索引
     try {
       const raw = JSON.parse(localStorage.getItem('snakeLucky_v1') || '{}');
       if (raw.lotteryResults && raw.lotteryResults.length > 0) {
@@ -210,49 +49,43 @@ function showLotteryPage(score) {
 /* ===== 结果页 ===== */
 function showResultPage(prizeIdx) {
   const prize = PRIZES[prizeIdx];
+  document.getElementById('result-title').textContent = '🎊 恭喜！';
   document.getElementById('result-prize-name').textContent = prize.name;
   document.getElementById('result-desc').textContent = prize.desc;
 
-  // 绘制大图
   const canvas = document.getElementById('canvas-prize');
   canvas.width = 180;
   canvas.height = 180;
   drawPrizeLarge(canvas, prizeIdx);
 
-  // 粒子
   Audio8bit.win();
   setTimeout(() => {
     const colors = ['#ffd700', '#ff6600', prize.color, '#ffffff', '#ff44aa'];
     Renderer.burst(window.innerWidth / 2, window.innerHeight / 2, colors, 150);
   }, 300);
 
-  // 按钮
   const data = Storage.get();
   const gamesLeft = MAX_GAMES - data.gamesPlayed;
-  const btnNext = document.getElementById('btn-result-next');
-
-  // 判断是否触发惊喜奖：四次用完 + 所有抽奖结果里没有固定奖品（prizeIndex === 0）
-  const allDone = gamesLeft === 0;
   const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
+  const allDone = gamesLeft === 0;
   const triggerSurprise = allDone && !hasFixed;
 
+  const btnNext = document.getElementById('btn-result-next');
   const btnReview = document.getElementById('btn-result-review');
-  btnReview.style.display = 'none'; // 默认隐藏
+  btnReview.style.display = 'none';
+  btnNext.className = 'btn';
 
-  if (gamesLeft > 0 && data.gamesPlayed < MAX_GAMES) {
-    btnNext.textContent = '继续游戏';
-    btnNext.className = 'btn';
-    btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startGame(); };
+  if (gamesLeft > 0) {
+    btnNext.textContent = '继续抽奖';
+    btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); startLottery(); };
   } else if (triggerSurprise) {
     btnNext.textContent = '🎊 领取特别惊喜！';
     btnNext.className = 'btn btn-gold';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showSurprisePage(); };
-    // 同时显示「查看全部奖品」入口
     btnReview.style.display = '';
     btnReview.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   } else {
     btnNext.textContent = '查看全部奖品';
-    btnNext.className = 'btn';
     btnNext.onclick = () => { Audio8bit.click(); Renderer.stopParticles(); showReviewPage(); };
   }
 
@@ -265,40 +98,32 @@ function showSurprisePage() {
   const before = document.getElementById('surprise-before');
   const after = document.getElementById('surprise-after');
 
-  // 重置状态
   box.classList.remove('flipped', 'dimmed');
   before.style.display = 'flex';
   after.style.display = 'none';
+  before.querySelectorAll('.lottery-hint').forEach(el => el.style.display = '');
 
   box.onclick = () => {
     if (box.classList.contains('flipped')) return;
     Audio8bit.flipOpen();
 
-    // 绘制相机缩略图到盲盒背面
     const thumb = document.getElementById('canvas-surprise-thumb');
     drawPrizeThumbnail(thumb, 0);
     box.classList.add('flipped');
 
-    // 翻转动画结束后显示奖品信息
     setTimeout(() => {
       const prize = PRIZES[0];
       document.getElementById('surprise-prize-name').textContent = prize.name;
       document.getElementById('surprise-prize-desc').textContent = prize.desc;
-
-      // 隐藏 before 区域里的文案行和提示行，只保留盲盒本身
       before.querySelectorAll('.lottery-hint').forEach(el => el.style.display = 'none');
-
-      // 显示 after 区域
       after.style.display = 'flex';
 
-      // 绑定「查看结果」按钮
       document.getElementById('btn-surprise-review').onclick = () => {
         Audio8bit.click();
         Renderer.stopParticles();
         showReviewPage();
       };
 
-      // 粒子特效
       Audio8bit.win();
       setTimeout(() => {
         const colors = ['#4488ff', '#88aaff', '#ffffff', '#aaccff', '#ffd700'];
@@ -310,6 +135,24 @@ function showSurprisePage() {
   showPage('surprise');
 }
 
+/* ===== 次数用完页 ===== */
+function showDonePage() {
+  const data = Storage.get();
+  const hasFixed = data.lotteryResults.some(r => r.prizeIndex === 0);
+
+  if (!hasFixed) {
+    // 未抽中固定奖品 → 惊喜
+    showSurprisePage();
+    return;
+  }
+
+  document.getElementById('btn-done-review').onclick = () => {
+    Audio8bit.click();
+    showReviewPage();
+  };
+  showPage('done');
+}
+
 /* ===== 回顾页 ===== */
 function showReviewPage() {
   const data = Storage.get();
@@ -318,73 +161,58 @@ function showReviewPage() {
   wonList.innerHTML = '';
   missedList.innerHTML = '';
 
-  // 已抽中的奖品索引集合
   const wonIndices = new Set(data.lotteryResults.map(r => r.prizeIndex));
-
-  // 若触发了惊喜奖，也算抽中固定奖品（index 0）
   const hasFixed = wonIndices.has(0);
-  const allDone = (MAX_GAMES - data.gamesPlayed) === 0;
-  const gotSurprise = allDone && !hasFixed && data.lotteryResults.length === MAX_GAMES;
+  const allDone = data.gamesPlayed >= MAX_GAMES;
+  const gotSurprise = allDone && !hasFixed;
   if (gotSurprise) wonIndices.add(0);
 
-  /* ── 已抽中列表 ── */
   if (wonIndices.size === 0) {
     wonList.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">还没有抽奖记录</div>';
   } else {
     data.lotteryResults.forEach((r, i) => {
       const prize = PRIZES[r.prizeIndex];
       if (!prize) return;
-      wonList.appendChild(makeReviewItem(prize, r.prizeIndex, `第${i+1}次`, r.score + '分', false));
+      wonList.appendChild(makeReviewItem(prize, r.prizeIndex, `第${i+1}次`, false));
     });
-
-    // 惊喜奖条目
     if (gotSurprise) {
-      wonList.appendChild(makeReviewItem(PRIZES[0], 0, '🎊', '惊喜奖', true));
+      wonList.appendChild(makeReviewItem(PRIZES[0], 0, '🎊惊喜', true));
     }
   }
 
-  /* ── 未抽中列表 ── */
   const missed = PRIZES.filter((_, i) => !wonIndices.has(i));
   if (missed.length === 0) {
     missedList.innerHTML = '<div style="color:var(--text-dim);font-size:13px;text-align:center;">全部抽中了！</div>';
   } else {
     missed.forEach(prize => {
-      missedList.appendChild(makeReviewItem(prize, prize.id, null, null, false, true));
+      missedList.appendChild(makeReviewItem(prize, prize.id, null, false, true));
     });
   }
 
   showPage('review');
 }
 
-/* ===== 工具：生成回顾列表条目 ===== */
-function makeReviewItem(prize, prizeIdx, label, sublabel, isSurprise, isDimmed = false) {
+function makeReviewItem(prize, prizeIdx, label, isSurprise, isDimmed = false) {
   const item = document.createElement('div');
   item.className = 'review-item';
-  if (isSurprise) {
-    item.style.borderColor = '#4488ff';
-    item.style.boxShadow = '0 0 8px #4488ff44';
-  }
-  if (isDimmed) {
-    item.style.opacity = '0.45';
-  }
+  if (isSurprise) { item.style.borderColor = '#4488ff'; item.style.boxShadow = '0 0 8px #4488ff44'; }
+  if (isDimmed) item.style.opacity = '0.45';
 
   const thumbCanvas = document.createElement('canvas');
-  thumbCanvas.width = 36;
-  thumbCanvas.height = 36;
+  thumbCanvas.width = 36; thumbCanvas.height = 36;
   thumbCanvas.className = 'review-item-icon';
   drawPrizeThumbnail(thumbCanvas, prizeIdx);
 
   const numColor = isSurprise ? '#4488ff' : 'var(--text-dim)';
   const nameColor = isSurprise ? '#88aaff' : (isDimmed ? 'var(--text-dim)' : 'var(--text-white)');
-  const subText = isSurprise ? '倒霉蛋特别奖' : (sublabel || '');
 
-  item.innerHTML = label
-    ? `<div class="review-item-num" style="color:${numColor}">${label}<br><span style="font-size:11px;color:var(--text-dim)">${subText}</span></div>`
-    : `<div class="review-item-num" style="min-width:36px"></div>`;
-
+  if (label) {
+    item.innerHTML = `<div class="review-item-num" style="color:${numColor}">${label}</div>`;
+  } else {
+    item.innerHTML = `<div class="review-item-num" style="min-width:36px"></div>`;
+  }
   item.appendChild(thumbCanvas);
-  item.insertAdjacentHTML('beforeend',
-    `<div class="review-item-name" style="color:${nameColor}">${prize.name}</div>`);
+  item.insertAdjacentHTML('beforeend', `<div class="review-item-name" style="color:${nameColor}">${prize.name}</div>`);
   return item;
 }
 
@@ -397,56 +225,24 @@ function initMuteBtn() {
   });
 }
 
-/* ===== 暂停按钮 ===== */
-function initPauseBtn() {
-  const btn = document.getElementById('btn-pause');
-  btn.addEventListener('click', () => {
-    if (state.currentPage !== 'game') return;
-    Audio8bit.click();
-    const nowPaused = Game.togglePause();
-    btn.textContent = nowPaused ? '▶' : '⏸';
-    btn.style.borderColor = nowPaused ? '#00ffff' : 'var(--text-dim)';
-    btn.style.color       = nowPaused ? '#00ffff' : 'var(--text-dim)';
-  });
-}
-
-/* ===== 游戏开始时重置暂停按钮状态 ===== */
-function resetPauseBtn() {
-  const btn = document.getElementById('btn-pause');
-  btn.textContent = '⏸';
-  btn.style.borderColor = 'var(--text-dim)';
-  btn.style.color       = 'var(--text-dim)';
-}
-
-/* ===== 窗口大小变化 ===== */
-window.addEventListener('resize', () => {
-  if (state.currentPage === 'game') Game.resizeCanvas();
-  const pc = document.getElementById('canvas-particles');
-  pc.width = window.innerWidth;
-  pc.height = window.innerHeight;
-});
-
 /* ===== 初始化 ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  // 粒子canvas
   const pc = document.getElementById('canvas-particles');
   pc.width = window.innerWidth;
   pc.height = window.innerHeight;
   Renderer.initParticles(pc);
 
-  // 游戏canvas
-  Game.init(document.getElementById('canvas-game'), {
-    onScoreUpdate,
-    onDie,
-    onUnlock61,
+  window.addEventListener('resize', () => {
+    pc.width = window.innerWidth;
+    pc.height = window.innerHeight;
   });
 
   initMuteBtn();
-  initPauseBtn();
-  initStartPage();
-  showPage('start');
 
-  // 解锁AudioContext
+  // 解锁 AudioContext
   document.addEventListener('touchstart', () => Audio8bit.unlock(), { once: true });
   document.addEventListener('click', () => Audio8bit.unlock(), { once: true });
+
+  // 直接进入抽盲盒
+  startLottery();
 });
