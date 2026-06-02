@@ -16,7 +16,11 @@ function updateChanceDots(container, gamesPlayed) {
 }
 
 /* ===== 抽盲盒入口 ===== */
+let _lotteryLock = false; // 防重入锁
+
 function startLottery() {
+  if (_lotteryLock) return;
+
   const data = Storage.get();
 
   // 次数用完
@@ -25,15 +29,18 @@ function startLottery() {
     return;
   }
 
+  _lotteryLock = true;
+  const gameIndex = data.gamesPlayed; // 记录当前局序号（0-based）
+
   // 更新机会圆点
-  updateChanceDots(document.getElementById('lottery-chances'), data.gamesPlayed);
+  updateChanceDots(document.getElementById('lottery-chances'), gameIndex);
 
   Storage.incrementGames();
 
   showPage('lottery');
   Lottery.prepare((prizeIdx) => {
-    // 抽完后才记录真实奖品
-    Storage.recordLottery(data.gamesPlayed, 0, prizeIdx);
+    _lotteryLock = false; // 抽完解锁
+    Storage.recordLottery(gameIndex, 0, prizeIdx);
     showResultPage(prizeIdx);
   });
 }

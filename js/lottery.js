@@ -143,7 +143,9 @@ const Lottery = (() => {
     }, 300);
 
     setTimeout(() => {
-      if (onResult) onResult(prizeIdx);
+      const cb = onResult;
+      onResult = null; // 清除，防止重复触发
+      if (cb) cb(prizeIdx);
     }, 900);
   }
 
