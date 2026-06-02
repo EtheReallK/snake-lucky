@@ -20,16 +20,18 @@ let _lotteryLock = false; // 防重入锁
 
 function startLottery() {
   if (_lotteryLock) return;
+  _lotteryLock = true; // 立即加锁，防止重复进入
 
+  // 重新读最新数据（防止快速点击时用到旧快照）
   const data = Storage.get();
 
   // 次数用完
   if (data.gamesPlayed >= MAX_GAMES) {
+    _lotteryLock = false;
     showDonePage();
     return;
   }
 
-  _lotteryLock = true;
   const gameIndex = data.gamesPlayed; // 记录当前局序号（0-based）
 
   // 更新机会圆点
